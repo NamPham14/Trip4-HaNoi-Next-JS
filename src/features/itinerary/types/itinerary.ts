@@ -1,0 +1,54 @@
+export interface ItineraryPlace {
+  id: number;
+  placeId: number;
+  placeName: string;
+  imageUrl?: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  dayNumber: number;
+  orderIndex: number;
+  session: string;
+  estimatedCost: number;
+  eventInfo?: any;
+}
+
+export interface DayItinerary {
+  dayNumber: number;
+  places: ItineraryPlace[];
+}
+
+export interface Itinerary {
+  id: number;
+  title: string;
+  budget: number;
+  days: number;
+  numberOfPeople: number;
+  createdAt: string;
+  itineraryDays: DayItinerary[];
+}
+
+export interface CreateItineraryRequest {
+  title: string;
+  budget: number;
+  days: number;
+  numberOfPeople: number;
+  categoryNames?: string[];
+  startDate?: string;
+}
+
+export interface UpdateFullItineraryRequest {
+  id: number;
+  title: string;
+  budget: number;
+  days: number;
+  numberOfPeople: number;
+  itineraryDays: {
+    dayNumber: number;
+    places: {
+      placeId: number;
+      dayNumber: number;
+      orderIndex: number;
+    }[];
+  }[];
+}
