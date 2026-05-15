@@ -83,86 +83,116 @@ export const ChatWidget = () => {
               </div>
             )}
 
-            {messages.map((msg) => (
-              <div 
-                key={msg.id} 
-                className={cn(
-                  "flex flex-col max-w-[85%]",
-                  msg.role === 'user' ? "ml-auto items-end" : "items-start"
-                )}
-              >
-                <div className={cn(
-                  "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
-                  msg.role === 'user' 
-                    ? "bg-hanoi-red text-white rounded-tr-none" 
-                    : "bg-white text-zinc-800 rounded-tl-none border border-zinc-100"
-                )}>
-                  {typeof msg.content === 'string' ? (
-                    msg.content
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="font-medium text-zinc-900">{msg.content.introduction}</p>
-                      
-                      {/* Timeline Rendering */}
-                      <div className="space-y-3 pt-2 border-t border-zinc-50">
-                        {msg.content.timeline.map((item, idx) => (
-                          <div key={idx} className="flex gap-3 group">
-                            <div className="flex flex-col items-center">
-                              <div className="h-6 w-6 rounded-full bg-hanoi-red/10 flex items-center justify-center text-[10px] font-bold text-hanoi-red">
-                                {idx + 1}
-                              </div>
-                              {idx !== msg.content.timeline.length - 1 && (
-                                <div className="w-px flex-1 bg-hanoi-red/10 my-1" />
-                              )}
-                            </div>
-                            <div className="flex-1 pb-4">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="secondary" className="text-[10px] bg-zinc-50 font-bold px-1.5 py-0">
-                                  {item.time}
-                                </Badge>
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                                  {item.estimatedCost ? `${item.estimatedCost.toLocaleString()}đ` : ""}
-                                </span>
-                              </div>
-                              <p className="font-bold text-zinc-900 text-xs">{item.activity}</p>
-                              {item.note && <p className="text-[11px] text-zinc-500 italic mt-1">{item.note}</p>}
-                              {item.placeId && (
-                                <Link href={`/places/${item.placeId}`} className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-hanoi-red hover:underline">
-                                  <Info className="h-3 w-3" /> Xem chi tiết
-                                </Link>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+            {messages.map((msg) => {
+              const { content } = msg;
+              const isString = typeof content === "string";
 
-                      <p className="text-xs text-zinc-500 pt-2">{msg.content.summary}</p>
-                      
-                      {/* Save Itinerary Button */}
-                      <div className="pt-2 border-t border-zinc-50 mt-2 flex justify-end">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="text-[10px] font-bold text-hanoi-red hover:bg-hanoi-red/5 h-8 gap-2 rounded-xl"
-                          disabled={isSaving}
-                          onClick={() => saveAIItinerary("Lịch trình từ AI", (msg.content as ChatResponse).timeline)}
-                        >
-                          {isSaving ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <Bookmark className="h-3 w-3" />
-                          )}
-                          Lưu lịch trình này
-                        </Button>
-                      </div>
-                    </div>
+              return (
+                <div
+                  key={msg.id}
+                  className={cn(
+                    "flex flex-col max-w-[85%]",
+                    msg.role === "user" ? "ml-auto items-end" : "items-start"
                   )}
+                >
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
+                      msg.role === "user"
+                        ? "bg-hanoi-red text-white rounded-tr-none"
+                        : "bg-white text-zinc-800 rounded-tl-none border border-zinc-100"
+                    )}
+                  >
+                    {isString ? (
+                      content
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="font-medium text-zinc-900">
+                          {content.introduction}
+                        </p>
+
+                        {/* Timeline Rendering */}
+                        <div className="space-y-3 pt-2 border-t border-zinc-50">
+                          {content.timeline.map((item, idx) => (
+                            <div key={idx} className="flex gap-3 group">
+                              <div className="flex flex-col items-center">
+                                <div className="h-6 w-6 rounded-full bg-hanoi-red/10 flex items-center justify-center text-[10px] font-bold text-hanoi-red">
+                                  {idx + 1}
+                                </div>
+                                {idx !== content.timeline.length - 1 && (
+                                  <div className="w-px flex-1 bg-hanoi-red/10 my-1" />
+                                )}
+                              </div>
+                              <div className="flex-1 pb-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px] bg-zinc-50 font-bold px-1.5 py-0"
+                                  >
+                                    {item.time}
+                                  </Badge>
+                                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                                    {item.estimatedCost
+                                      ? `${item.estimatedCost.toLocaleString()}đ`
+                                      : ""}
+                                  </span>
+                                </div>
+                                <p className="font-bold text-zinc-900 text-xs">
+                                  {item.activity}
+                                </p>
+                                {item.note && (
+                                  <p className="text-[11px] text-zinc-500 italic mt-1">
+                                    {item.note}
+                                  </p>
+                                )}
+                                {item.placeId && (
+                                  <Link
+                                    href={`/places/${item.placeId}`}
+                                    className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-hanoi-red hover:underline"
+                                  >
+                                    <Info className="h-3 w-3" /> Xem chi tiết
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <p className="text-xs text-zinc-500 pt-2">
+                          {content.summary}
+                        </p>
+
+                        {/* Save Itinerary Button */}
+                        <div className="pt-2 border-t border-zinc-50 mt-2 flex justify-end">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-[10px] font-bold text-hanoi-red hover:bg-hanoi-red/5 h-8 gap-2 rounded-xl"
+                            disabled={isSaving}
+                            onClick={() =>
+                              saveAIItinerary("Lịch trình từ AI", content.timeline)
+                            }
+                          >
+                            {isSaving ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Bookmark className="h-3 w-3" />
+                            )}
+                            Lưu lịch trình này
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-zinc-400 mt-1 font-medium px-1">
+                    {new Date(msg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
-                <span className="text-[10px] text-zinc-400 mt-1 font-medium px-1">
-                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            ))}
+              );
+            })}
 
             {isLoading && (
               <div className="flex items-start max-w-[85%]">

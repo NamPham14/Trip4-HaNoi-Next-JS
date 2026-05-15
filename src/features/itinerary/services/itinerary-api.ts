@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse } from "@/shared/types/api";
 import { Itinerary, CreateItineraryRequest, UpdateFullItineraryRequest } from "../types/itinerary";

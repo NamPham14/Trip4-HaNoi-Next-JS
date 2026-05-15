@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { itineraryService } from '../services/itinerary-api';
-import { Itinerary, CreateItineraryRequest, UpdateFullItineraryRequest } from '../types/itinerary';
+import { Itinerary } from '../types/itinerary';
 import { toast } from 'sonner';
 
 export const useItinerary = () => {

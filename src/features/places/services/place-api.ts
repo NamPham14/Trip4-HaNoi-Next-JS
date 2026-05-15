@@ -10,8 +10,8 @@ export const placeService = {
    * Search and filter places
    */
   getPlaces: async (params: PlaceFilterParams): Promise<PageResponse<Place>> => {
-    // Backend expects page to be 1-indexed (page=1 is first page)
-    // Frontend (TanStack Query / Component) uses 0-indexed
+    // Backend mong đợi trang được đánh số từ 1 (trang=1 là trang đầu tiên)
+    // Frontend (Truy vấn/Thành phần TanStack) sử dụng chỉ số từ 0
     const adjustedParams = {
       ...params,
       page: (params.page !== undefined ? params.page + 1 : 1),

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -5,11 +6,10 @@ import { useParams } from "next/navigation";
 import { Navbar } from "@/shared/components/navbar";
 import { itineraryService } from "@/features/itinerary/services/itinerary-api";
 import { Itinerary, ItineraryPlace } from "@/features/itinerary/types/itinerary";
-import { MapPin, Clock, Users, Wallet, ArrowLeft, Info, Calendar, Map as MapIcon, List, Loader2 } from "lucide-react";
+import { MapPin, Clock, ArrowLeft, Info, Map as MapIcon, List, Loader2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import Link from "next/link";
-import { Skeleton } from "@/shared/components/ui/skeleton";
 import { cn } from "@/shared/lib/utils";
 
 import { useLocationStore } from "@/shared/store/location-store";
@@ -211,8 +211,8 @@ const ItineraryMap = ({ places }: { places: ItineraryPlace[] }) => {
           mapRef.current.fitBounds(bounds, { padding: [50, 50] });
         }
       } catch (e) {}
-    }
-  }, [places, isLeafletReady, mapRef.current]);
+    }//mapRef.current
+  }, [places, isLeafletReady, mapRef]);
 
   return <div ref={mapContainerRef} className="h-full w-full z-0 bg-zinc-100" style={{ minHeight: '400px' }} />;
 };

@@ -21,39 +21,7 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
       return;
     }
 
-    // 1. Cấu hình theo dõi liên tục (WatchPosition)
-    // Giúp cập nhật khoảng cách trên trang Explore ngay lập tức khi di chuyển
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        // Cập nhật Store (chỉ khi thay đổi đáng kể để tránh re-render liên tục)
-        if (!lat || !lng || calculateDistance(lat, lng, latitude, longitude) > 0.01) {
-          setLocation(latitude, longitude);
-          
-          // Kiểm tra và gửi lên Backend nếu thỏa mãn điều kiện
-          handleBackgroundTracking(latitude, longitude);
-        }
-      },
-      (error) => {
-        if (error.code === error.PERMISSION_DENIED) {
-          toast.warning("Vui lòng bật GPS để có trải nghiệm tìm kiếm tốt nhất xung quanh bạn.");
-        }
-        console.error('GPS Error:', error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, [isTrackingEnabled, setLocation, lat, lng]);
-
-  /**
+     /**
    * Logic gửi vị trí lên BE
    * Điều kiện: Đã đăng nhập AND (Chưa gửi bao giờ OR Di chuyển > 500m OR Sau 15 phút)
    */
@@ -85,6 +53,41 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
       lastTrackedRef.current = { lat: currentLat, lng: currentLng, time: now };
     }
   };
+
+  
+    //  Cấu hình theo dõi liên tục (WatchPosition)
+    // Giúp cập nhật khoảng cách trên trang Explore ngay lập tức khi di chuyển
+  const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        // Cập nhật Store (chỉ khi thay đổi đáng kể để tránh re-render liên tục)
+        if (!lat || !lng || calculateDistance(lat, lng, latitude, longitude) > 0.01) {
+          setLocation(latitude, longitude);
+          
+          // Kiểm tra và gửi lên Backend nếu thỏa mãn điều kiện
+          handleBackgroundTracking(latitude, longitude);
+        }
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          toast.warning("Vui lòng bật GPS để có trải nghiệm tìm kiếm tốt nhất xung quanh bạn.");
+        }
+        console.error('GPS Error:', error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [isTrackingEnabled, setLocation, lat, lng]);
+
+ 
 
   return <>{children}</>;
 };

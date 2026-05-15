@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Star, Eye, Flame } from "lucide-react";
+import {  Star, Eye, Flame } from "lucide-react";
 import { Place } from "../types/place";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
