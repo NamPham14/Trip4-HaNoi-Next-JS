@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Search, MapPin, Sparkles } from "lucide-react";
 import { RecommendationList } from "@/features/places/components/recommendation-list";
@@ -73,10 +75,68 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer Simulation */}
-      <footer className="py-10 text-center border-t border-zinc-100">
-        <p className="text-zinc-400 text-sm font-medium">© 2026 Trip4Hanoi - Crafted with ❤️ for the capital</p>
-      </footer>
+      {/* Events Section */}
+      <FeaturedEventsSection />
+
+      <Footer />
     </div>
+  );
+}
+
+import { useEvents } from "@/features/events/hooks/use-events";
+import Footer from "@/shared/components/Footer";
+import { EventCard } from "@/features/events/components/event-card";
+import { Event } from "@/features/events/types/event";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
+function FeaturedEventsSection() {
+  const { data, isLoading } = useEvents({ page: 0, size: 3 });
+  const events = data?.data || [];
+
+  if (!isLoading && events.length === 0) return null;
+
+  return (
+    <section className="py-16 md:py-24 px-4 bg-zinc-50 border-t border-zinc-100 overflow-hidden relative">
+      <div className="container mx-auto relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-red/10 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+              <Sparkles className="h-3 w-3" /> Đừng bỏ lỡ
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tighter">
+              Sự kiện đang <span className="text-hanoi-red">diễn ra</span>
+            </h2>
+            <p className="text-zinc-500 font-medium max-w-xl">
+              Hà Nội luôn sôi động với các lễ hội truyền thống, triển lãm nghệ thuật và các sự kiện giải trí đặc sắc.
+            </p>
+          </div>
+          <Link href="/events">
+            <Button className="bg-zinc-900 hover:bg-hanoi-red text-white font-black px-8 h-14 rounded-2xl shadow-xl shadow-zinc-900/10 transition-all active:scale-95">
+              Xem tất cả sự kiện <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 opacity-50">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-[32px] aspect-[4/5] animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {events.map((event: Event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Decoration */}
+      <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none select-none">
+        <span className="text-[20vw] font-black italic tracking-tighter">HANOI</span>
+      </div>
+    </section>
   );
 }
