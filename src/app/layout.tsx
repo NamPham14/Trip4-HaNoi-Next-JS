@@ -23,7 +23,7 @@ export default function RootLayout({children} :{children :React.ReactNode}) {
           <LocationProvider>
             {children}
             <ChatWidget />
-            <Toaster position="top-right" richColors />
+            <Toaster position="bottom-right" richColors />
           </LocationProvider>
         </QueryProvider>
       </body>

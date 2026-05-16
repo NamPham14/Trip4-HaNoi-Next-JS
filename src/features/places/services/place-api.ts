@@ -41,5 +41,29 @@ export const placeService = {
       params: { userLat, userLng }
     });
     return response.data.data;
+  },
+
+  /**
+   * Submit a review for a place
+   */
+  submitReview: async (data: { placeId: number; rating: number; comment: string }): Promise<any> => {
+    const response = await axiosInstance.post<ApiResponse<any>>('/reviews', data);
+    return response.data.data;
+  },
+
+  /**
+   * Toggle favorite status of a place
+   */
+  toggleFavorite: async (placeId: number): Promise<any> => {
+    const response = await axiosInstance.post<ApiResponse<any>>(`/saved-places/${placeId}`);
+    return response.data.data;
+  },
+
+  /**
+   * Check if a place is favorited by the current user
+   */
+  checkFavoriteStatus: async (placeId: number): Promise<boolean> => {
+    const response = await axiosInstance.get<ApiResponse<boolean>>(`/saved-places/check/${placeId}`);
+    return response.data.data;
   }
 };

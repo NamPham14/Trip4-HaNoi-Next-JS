@@ -11,6 +11,17 @@ import Link from "next/link";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { itineraryService } from "@/features/itinerary/services/itinerary-api";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/components/ui/alert-dialog";
 
 export default function MyItinerariesPage() {
   const { myItineraries, fetchMyItineraries, isLoading } = useItinerary();
@@ -20,14 +31,12 @@ export default function MyItinerariesPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (confirm("Bạn có chắc chắn muốn xóa lịch trình này?")) {
-      try {
-        await itineraryService.deleteItinerary(id);
-        toast.success("Đã xóa lịch trình");
-        fetchMyItineraries();
-      } catch (error) {
-        toast.error("Lỗi khi xóa lịch trình");
-      }
+    try {
+      await itineraryService.deleteItinerary(id);
+      toast.success("Đã xóa lịch trình");
+      fetchMyItineraries();
+    } catch (error) {
+      toast.error("Lỗi khi xóa lịch trình");
     }
   };
 
@@ -71,19 +80,37 @@ export default function MyItinerariesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {myItineraries.map((itinerary) => (
               <Card key={itinerary.id} className="overflow-hidden border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl group">
-                <CardHeader className="bg-zinc-900 text-white p-6 relative">
-                  <div className="flex justify-between items-start">
-                    <Badge className="bg-hanoi-gold text-hanoi-red border-none font-bold text-[10px]">
+                <CardHeader className="bg-zinc-900 text-white p-5 md:p-6 relative min-h-[110px] md:min-h-[120px] flex flex-col justify-between">
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge className="bg-hanoi-gold text-hanoi-red border-none font-bold text-[9px] md:text-[10px]">
                       {itinerary.days} NGÀY
                     </Badge>
-                    <button 
-                      onClick={() => handleDelete(itinerary.id)}
-                      className="text-white/50 hover:text-hanoi-gold transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="text-white/50 hover:text-hanoi-gold transition-colors p-1 -mr-1">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Xóa lịch trình này?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Hành động này không thể hoàn tác. Lịch trình "{itinerary.title}" sẽ bị xóa vĩnh viễn khỏi tài khoản của bạn.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="rounded-xl font-bold">Hủy</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleDelete(itinerary.id)}
+                            className="bg-hanoi-red hover:bg-[#6D1616] rounded-xl font-bold"
+                          >
+                            Xác nhận xóa
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                  <CardTitle className="mt-4 text-xl font-bold group-hover:text-hanoi-gold transition-colors truncate">
+                  <CardTitle className="text-lg md:text-xl font-bold group-hover:text-hanoi-gold transition-colors leading-tight line-clamp-2">
                     {itinerary.title}
                   </CardTitle>
                 </CardHeader>

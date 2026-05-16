@@ -31,5 +31,10 @@ export const itineraryService = {
 
   deleteItinerary: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/itineraries/remove-itinerary/${id}`);
+  },
+
+  addPlaceToItinerary: async (data: { itineraryId: number, placeId: number, dayNumber: number }): Promise<Itinerary> => {
+    const response = await axiosInstance.post<ApiResponse<Itinerary>>('/itineraries/add-place', data);
+    return response.data.data;
   }
 };
