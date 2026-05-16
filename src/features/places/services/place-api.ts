@@ -52,6 +52,14 @@ export const placeService = {
   },
 
   /**
+   * Get reviews written by the current user
+   */
+  getMyReviews: async (): Promise<any[]> => {
+    const response = await axiosInstance.get<ApiResponse<any[]>>('/reviews/my');
+    return response.data.data;
+  },
+
+  /**
    * Toggle favorite status of a place
    */
   toggleFavorite: async (placeId: number): Promise<any> => {
@@ -64,6 +72,14 @@ export const placeService = {
    */
   checkFavoriteStatus: async (placeId: number): Promise<boolean> => {
     const response = await axiosInstance.get<ApiResponse<boolean>>(`/saved-places/check/${placeId}`);
+    return response.data.data;
+  },
+
+  /**
+   * Get favorited places for the current user
+   */
+  getSavedPlaces: async (): Promise<any[]> => {
+    const response = await axiosInstance.get<ApiResponse<any[]>>('/saved-places/my');
     return response.data.data;
   }
 };

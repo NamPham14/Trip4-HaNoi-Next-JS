@@ -1,7 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/auth-api";
+import { userService, UserUpdateRequest } from "../services/user-api";
 import { useAuthStore } from "@/shared/store/auth-store";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 /**
  * Hook for Login
@@ -59,4 +62,43 @@ export const useUser = () => {
     isAuthenticated,
     isAdmin: user?.roles.some(role => role.name === 'ADMIN'),
   };
+};
+
+/**
+ * Hook to fetch my info from server
+ */
+export const useMyInfo = () => {
+  const updateUser = useAuthStore((state) => state.updateUser);
+  
+  return useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const data = await authService.getMe();
+      updateUser(data);
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+/**
+ * Hook to update profile
+ */
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  const updateUser = useAuthStore((state) => state.updateUser);
+
+  return useMutation({
+    mutationFn: (variables: { data: UserUpdateRequest; file?: File }) => 
+      userService.updateProfile(variables.data, variables.file),
+    onSuccess: async () => {
+      toast.success("Cập nhật thông tin thành công!");
+      const updatedUser = await authService.getMe();
+      updateUser(updatedUser);
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Cập nhật thất bại");
+    }
+  });
 };

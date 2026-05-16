@@ -15,6 +15,8 @@ export const placeKeys = {
   recommendations: (lat?: number, lng?: number) => [...placeKeys.all, 'recommendations', { lat, lng }] as const,
   detail: (id: string | number) => [...placeKeys.all, 'detail', String(id)] as const,
   favoriteStatus: (id: string | number) => [...placeKeys.all, 'favorite-status', String(id)] as const,
+  saved: () => [...placeKeys.all, 'saved'] as const,
+  myReviews: () => [...placeKeys.all, 'my-reviews'] as const,
 };
 
 /**
@@ -53,6 +55,7 @@ export const useToggleFavorite = () => {
     onSuccess: (_, placeId) => {
       queryClient.invalidateQueries({ queryKey: placeKeys.favoriteStatus(placeId) });
       queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
+      queryClient.invalidateQueries({ queryKey: placeKeys.saved() });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Thao tác thất bại");
@@ -79,6 +82,7 @@ export const useSubmitReview = () => {
         queryKey: placeKeys.detail(variables.placeId),
         exact: true
       });
+      queryClient.invalidateQueries({ queryKey: placeKeys.myReviews() });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Không thể gửi đánh giá");
@@ -115,5 +119,26 @@ export const usePlaces = (params: PlaceFilterParams) => {
     queryKey: placeKeys.list(mergedParams),
     queryFn: () => placeService.getPlaces(mergedParams),
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+/**
+ * Hook for fetching favorited places
+ */
+export const useSavedPlaces = () => {
+  return useQuery({
+    queryKey: placeKeys.saved(),
+    queryFn: () => placeService.getSavedPlaces(),
+  });
+};
+
+/**
+ * Hook for fetching reviews written by the current user
+ */
+export const useMyReviews = (enabled: boolean = true) => {
+  return useQuery({
+    queryKey: placeKeys.myReviews(),
+    queryFn: () => placeService.getMyReviews(),
+    enabled: enabled
   });
 };

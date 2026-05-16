@@ -12,6 +12,8 @@ interface PlaceCardProps {
 }
 
 export const PlaceCard = ({ place, className }: PlaceCardProps) => {
+  if (!place) return null;
+  
   const mainImage = place.images?.[0]?.imageUrl || "https://images.unsplash.com/photo-1509356861241-713028054452?auto=format&fit=crop&q=80&w=800";
 
   return (

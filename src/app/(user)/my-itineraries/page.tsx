@@ -95,7 +95,7 @@ export default function MyItinerariesPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Xóa lịch trình này?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Hành động này không thể hoàn tác. Lịch trình "{itinerary.title}" sẽ bị xóa vĩnh viễn khỏi tài khoản của bạn.
+                            Hành động này không thể hoàn tác. Lịch trình &quot;{itinerary.title}&quot; sẽ bị xóa vĩnh viễn khỏi tài khoản của bạn.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

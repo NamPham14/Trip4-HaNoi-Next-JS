@@ -8,6 +8,7 @@ export interface User {
   language: string;
   status: 'ACTIVE' | 'INACTIVE' | 'BANNED';
   isLocationTrackingEnabled: boolean;
+  createdAt?: string;
 }
 
 export interface Role {
