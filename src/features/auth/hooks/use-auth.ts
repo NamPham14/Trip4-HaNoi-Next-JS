@@ -16,10 +16,25 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
-      setAuth(data.user, data.accessToken);
-      router.push('/');
+      // Lưu auth vào store và cookie
+      setAuth(data.user, data.accessToken, data.refreshToken);
+      
+      // Kiểm tra role để điều hướng
+      const isAdmin = data.user.roles.some(role => role.name === 'ADMIN');
+      
+      if (isAdmin) {
+        toast.success("Chào mừng Admin quay trở lại!");
+        router.push('/admin');
+      } else {
+        toast.success("Đăng nhập thành công!");
+        router.push('/');
+      }
+      
       router.refresh();
     },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    }
   });
 };
 

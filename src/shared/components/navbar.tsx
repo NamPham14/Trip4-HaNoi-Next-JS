@@ -86,10 +86,12 @@ export const Navbar = () => {
                       Lịch trình của tôi
                     </DropdownMenuItem>
                   </Link>
+                  <Link href="/saved-places">
                   <DropdownMenuItem className="rounded-xl px-3 py-2.5 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-zinc-50 focus:text-hanoi-red">
                     <Heart className="mr-2.5 h-4 w-4" />
                     Địa điểm đã lưu
                   </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuSeparator className="bg-zinc-50" />
                   <DropdownMenuItem 
                     onClick={() => logout()}

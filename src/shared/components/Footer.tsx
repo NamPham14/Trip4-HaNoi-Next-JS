@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, MessageCircle, Camera, Send } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
@@ -32,9 +33,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-bold mb-6">Quick Links</h4>
             <ul className="space-y-4 text-slate-400">
-              <li><a href="/explore" className="hover:text-white transition-colors">Khám phá</a></li>
-              <li><a href="/planner" className="hover:text-white transition-colors">Lên lịch trình</a></li>
-              <li><a href="/events" className="hover:text-white transition-colors">Sự kiện</a></li>
+              <li><Link href="/explore" className="hover:text-white transition-colors">Khám phá</Link></li>
+              <li><Link href="/planner" className="hover:text-white transition-colors">Lên lịch trình</Link></li>
+              <li><Link href="/events" className="hover:text-white transition-colors">Sự kiện</Link></li>
               <li><a href="#" className="hover:text-white transition-colors">Blog Du lịch</a></li>
             </ul>
           </div>

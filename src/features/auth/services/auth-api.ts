@@ -47,5 +47,13 @@ export const authService = {
   introspect: async (token: string): Promise<boolean> => {
     const response = await axiosInstance.post<ApiResponse<{ valid: boolean }>>('/auth/introspect', { token });
     return response.data.data.valid;
+  },
+
+  /**
+   * Refresh access token
+   */
+  refresh: async (refreshToken: string): Promise<{ accessToken: string }> => {
+    const response = await axiosInstance.post<ApiResponse<{ accessToken: string }>>('/auth/refresh', { token: refreshToken });
+    return response.data.data;
   }
 };

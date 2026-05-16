@@ -30,10 +30,14 @@ import { cn } from "@/shared/lib/utils";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { useLocationStore } from "@/shared/store/location-store";
+import { useUser } from "@/features/auth/hooks/use-auth";
+
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
   const eventId = params.id as string;
+  const { isAuthenticated } = useUser();
 
   const { data: event, isLoading, isError } = useEventDetail(eventId);
   const { data: place } = usePlaceDetail(event?.placeId || "");
@@ -68,6 +72,10 @@ export default function EventDetailPage() {
   }
 
   const handleFollow = () => {
+    if (!isAuthenticated) {
+      toast.error("Vui lòng đăng nhập để theo dõi sự kiện");
+      return;
+    }
     if (event.isFollowed) {
       unfollowMutation.mutate(event.id);
     } else {
@@ -273,14 +281,19 @@ export default function EventDetailPage() {
                     >
                       <Share2 className="mr-2 h-5 w-5 transition-transform group-hover:-translate-y-1" /> Chia sẻ
                     </Button>
-                    <Link href={`/planner?placeId=${event.placeId}`} className="block">
-                      <Button 
-                        variant="outline" 
-                        className="w-full h-16 rounded-2xl border-zinc-100 font-black text-zinc-600 hover:bg-zinc-50 hover:border-hanoi-red/20 transition-all group"
-                      >
-                        <Wind className="mr-2 h-5 w-5 transition-transform group-hover:translate-x-1" /> Lên lịch
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.error("Vui lòng đăng nhập để lên lịch trình");
+                          return;
+                        }
+                        router.push(`/planner?placeId=${event.placeId}`);
+                      }}
+                      className="w-full h-16 rounded-2xl border-zinc-100 font-black text-zinc-600 hover:bg-zinc-50 hover:border-hanoi-red/20 transition-all group"
+                    >
+                      <Wind className="mr-2 h-5 w-5 transition-transform group-hover:translate-x-1" /> Lên lịch
+                    </Button>
                   </div>
                 </div>
 

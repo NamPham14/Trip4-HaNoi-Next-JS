@@ -360,7 +360,8 @@ export default function PlaceDetailPage() {
                     Sự kiện đang diễn ra
                   </h2>
                   <div className="space-y-4">
-                    {place.events.map((event) => (
+                    {/* Deduplicate events by ID to prevent visual repetition */}
+                    {Array.from(new Map(place.events.map(ev => [ev.id, ev])).values()).map((event) => (
                       <div key={event.id} className="bg-orange-50 border border-orange-100 p-6 rounded-2xl">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-xl font-bold text-orange-900">{event.name}</h3>
@@ -496,16 +497,18 @@ export default function PlaceDetailPage() {
                   </div>
                   
                   <div className="pt-2">
-                    <a 
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full"
+                    <Button 
+                      onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.error("Vui lòng đăng nhập để sử dụng tính năng chỉ đường");
+                          return;
+                        }
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`, '_blank');
+                      }}
+                      className="w-full bg-hanoi-red hover:bg-hanoi-red/90 h-12 rounded-xl font-bold text-base md:text-lg shadow-lg shadow-hanoi-red/20 transition-all"
                     >
-                      <Button className="w-full bg-hanoi-red hover:bg-hanoi-red/90 h-12 rounded-xl font-bold text-base md:text-lg shadow-lg shadow-hanoi-red/20 transition-all">
-                        Chỉ đường đi
-                      </Button>
-                    </a>
+                      Chỉ đường đi
+                    </Button>
                   </div>
                 </div>
 
@@ -557,16 +560,18 @@ export default function PlaceDetailPage() {
             <Heart className={cn("h-6 w-6", isFavorite && "fill-current")} />
           )}
         </button>
-        <a 
-          href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1"
+        <Button 
+          onClick={() => {
+            if (!isAuthenticated) {
+              toast.error("Vui lòng đăng nhập để sử dụng tính năng chỉ đường");
+              return;
+            }
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`, '_blank');
+          }}
+          className="flex-1 bg-hanoi-red hover:bg-hanoi-red/90 h-14 rounded-2xl font-bold text-base shadow-lg shadow-hanoi-red/20 active:scale-[0.98] transition-all"
         >
-          <Button className="w-full bg-hanoi-red hover:bg-hanoi-red/90 h-14 rounded-2xl font-bold text-base shadow-lg shadow-hanoi-red/20 active:scale-[0.98] transition-all">
-            Chỉ đường đi ngay
-          </Button>
-        </a>
+          Chỉ đường đi ngay
+        </Button>
       </div>
     </div>
   );

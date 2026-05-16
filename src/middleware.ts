@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Protected and Public routes configuration
-const protectedRoutes = ['/admin', '/profile', '/planner'];
+// Protected routes that require login
+const protectedRoutes = ['/admin', '/profile', '/planner', '/my-itineraries', '/saved-places'];
+// Routes that should NOT be accessible if already logged in
 const publicOnlyRoutes = ['/login', '/register'];
 
 /**
@@ -12,7 +13,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('access_token')?.value;
 
-  // 1. If trying to access protected route without token
+  //  If trying to access protected route without token
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
   if (isProtectedRoute && !token) {
     const loginUrl = new URL('/login', request.url);
@@ -20,17 +21,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. If trying to access public-only route with token
+  //  If trying to access public-only route (login/register) with token
   const isPublicOnlyRoute = publicOnlyRoutes.some((route) => pathname.startsWith(route));
   if (isPublicOnlyRoute && token) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // 3. Admin specific protection (Optional: can be enhanced with JWT decoding)
+  //  Admin specific protection
+  // Note: For full security, role check should happen on Server Components or via JWT decode
   if (pathname.startsWith('/admin') && token) {
-     // In a real production app, you might want to decode the JWT here 
-     // to check the ROLE before allowing access. 
-     // For simplicity, we assume token check is enough for now.
+    // Optional: Add logic to decode JWT and check role if possible here
   }
 
   return NextResponse.next();

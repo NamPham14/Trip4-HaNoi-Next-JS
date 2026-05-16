@@ -6,7 +6,7 @@ import { User } from '@/features/auth/types/auth';
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
 }
@@ -20,18 +20,23 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
 
-      setAuth: (user, token) => {
+      setAuth: (user, accessToken, refreshToken) => {
         // Lưu trữ mã thông báo trong cookie cho các trình chặn SSR và API
-        Cookies.set('access_token', token, { 
-          expires: 7, // 7 days
+        const cookieOptions = { 
+          expires: 7, // 7 ngày
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax'
-        });
+          sameSite: 'lax' as const
+        };
+        
+        Cookies.set('access_token', accessToken, cookieOptions);
+        Cookies.set('refresh_token', refreshToken, cookieOptions);
+        
         set({ user, isAuthenticated: true });
       },
 
       logout: () => {
         Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
         set({ user: null, isAuthenticated: false });
       },
 

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
+import { authService } from "@/features/auth/services/auth-api";
 
 /**
  * Custom Axios Instance
@@ -30,24 +31,58 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // Backend usually wraps data in 'result'
     return response;
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+    // Tránh vòng lặp vô tận nếu API refresh cũng trả về 401
+    if (originalRequest.url?.includes('/auth/refresh')) {
+      return Promise.reject(error);
+    }
+
     // Handle 401 Unauthorized (Expired Token)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      // TODO: Implement Refresh Token Logic here
-      // const refreshToken = Cookies.get('refresh_token');
-      // if (refreshToken) { ... }
-      
-      // For now, just clear cookies and redirect if 401
-      Cookies.remove('access_token');
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+      try {
+        const refreshToken = Cookies.get('refresh_token');
+        
+        // Nếu không có refresh token (là Guest), không tự động redirect
+        if (!refreshToken) {
+          return Promise.reject(error);
+        }
+
+        // Gọi API refresh để lấy access token mới
+        const { accessToken } = await authService.refresh(refreshToken);
+        
+        // Cập nhật cookie mới
+        Cookies.set('access_token', accessToken, { 
+          expires: 7, 
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        });
+
+        // Gửi lại request ban đầu với token mới
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return axiosInstance(originalRequest);
+        
+      } catch (refreshError) {
+        // Chỉ redirect nếu thực sự việc refresh thất bại (Token hết hạn hẳn)
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+        
+        // Kiểm tra xem có đang ở trang public không, nếu có thì không cần redirect mạnh
+        const isPublicPage = ['/', '/explore', '/events', '/places'].some(path => 
+          typeof window !== 'undefined' && window.location.pathname === path
+        );
+
+        if (typeof window !== 'undefined' && !isPublicPage) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
       }
     }
 
