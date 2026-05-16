@@ -32,8 +32,25 @@ const HANOI_DISTRICTS = [
 
 export const ExploreFilters = ({ filters, setFilters }: ExploreFiltersProps) => {
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const [localKeyword, setLocalKeyword] = React.useState(filters.keyword);
+
+  // Sync local keyword with external filters (e.g. on clear all)
+  React.useEffect(() => {
+    setLocalKeyword(filters.keyword);
+  }, [filters.keyword]);
+
+  // Debounce logic
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localKeyword !== filters.keyword) {
+        setFilters(prev => ({ ...prev, keyword: localKeyword }));
+      }
+    }, 500); // Wait 500ms after user stops typing
+    return () => clearTimeout(timer);
+  }, [localKeyword, setFilters, filters.keyword]);
 
   const handleClearFilters = () => {
+    setLocalKeyword("");
     setFilters({
       keyword: "",
       categoryId: undefined,
@@ -68,8 +85,8 @@ export const ExploreFilters = ({ filters, setFilters }: ExploreFiltersProps) => 
           <Input 
             placeholder="Tên quán, món ăn..." 
             className="pl-10 border-zinc-100 focus:border-hanoi-red"
-            value={filters.keyword}
-            onChange={(e) => setFilters(prev => ({ ...prev, keyword: e.target.value }))}
+            value={localKeyword}
+            onChange={(e) => setLocalKeyword(e.target.value)}
           />
         </div>
       </div>
