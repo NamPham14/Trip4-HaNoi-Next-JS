@@ -20,7 +20,8 @@ const menuItems = [
   { icon: Tags, label: 'Danh mục', href: '/admin/categories', roles: ['ADMIN', 'STAFF'] },
   { icon: MessageSquare, label: 'Bài viết & Review', href: '/admin/posts', roles: ['ADMIN', 'STAFF'] },
   { icon: Users, label: 'Người dùng', href: '/admin/users', roles: ['ADMIN'] },
-  { icon: ShieldCheck, label: 'Quyền & Vai trò', href: '/admin/roles', roles: ['ADMIN'] },
+  { icon: ShieldCheck, label: 'Quản lý Vai trò', href: '/admin/roles', roles: ['ADMIN'] },
+  { icon: ShieldCheck, label: 'Quản lý Quyền', href: '/admin/permissions', roles: ['ADMIN'] },
 ];
 
 export function AdminSidebar() {
