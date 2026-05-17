@@ -41,6 +41,14 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Handle 403 Forbidden (Dynamic Permission Change)
+    if (error.response?.status === 403) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/403';
+      }
+      return Promise.reject(error);
+    }
+
     // Handle 401 Unauthorized (Expired Token)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -80,7 +88,7 @@ axiosInstance.interceptors.response.use(
         );
 
         if (typeof window !== 'undefined' && !isPublicPage) {
-          window.location.href = '/login';
+          window.location.href = '/401';
         }
         return Promise.reject(refreshError);
       }

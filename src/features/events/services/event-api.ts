@@ -1,41 +1,86 @@
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse, PageResponse } from "@/shared/types/api";
-import { Event, EventResponse } from "../types/event";
+import { Event } from "../types/event";
 
-/**
- * Service for fetching event data
- */
 export const eventService = {
   /**
-   * Get all events with filtering and pagination
+   * Get all events with filtering and pagination (for Admin)
    */
-  getEvents: async (params: { 
-    keyword?: string; 
-    placeId?: number; 
-    page?: number; 
-    size?: number 
+  getEventsAdmin: async (params: {
+    keyword?: string;
+    placeId?: number;
+    page?: number;
+    size?: number;
   }): Promise<PageResponse<Event>> => {
-    // Backend expects page starting from 1
-    const adjustedParams = {
-      ...params,
-      page: (params.page !== undefined ? params.page + 1 : 1),
-      size: params.size || 10
-    };
-    
-    const response = await axiosInstance.get<ApiResponse<PageResponse<Event>>>('/events', { 
-      params: adjustedParams 
+    const response = await axiosInstance.get<ApiResponse<PageResponse<Event>>>('/events/admin', {
+      params: {
+        keyword: params.keyword,
+        placeId: params.placeId,
+        page: params.page || 1,
+        size: params.size || 10
+      }
+    });
+    return response.data.data;
+  },
+
+  /**
+   * Get all events with filtering and pagination (for User)
+   */
+  getEvents: async (params: {
+    keyword?: string;
+    placeId?: number;
+    page?: number;
+    size?: number;
+  }): Promise<PageResponse<Event>> => {
+    const response = await axiosInstance.get<ApiResponse<PageResponse<Event>>>('/events', {
+      params: {
+        keyword: params.keyword,
+        placeId: params.placeId,
+        page: params.page || 1,
+        size: params.size || 10
+      }
     });
     return response.data.data;
   },
 
   /**
    * Get event details by ID
-   * Note: This might require BE support if not exists. 
-   * Falling back to filtering from list if necessary, but assuming standard REST.
    */
   getEventById: async (id: number | string): Promise<Event> => {
     const response = await axiosInstance.get<ApiResponse<Event>>(`/events/${id}`);
     return response.data.data;
+  },
+
+  /**
+   * Create a new event with images
+   */
+  createEvent: async (formData: FormData): Promise<Event> => {
+    const response = await axiosInstance.post<ApiResponse<Event>>('/events', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
+  /**
+   * Update an existing event with images
+   */
+  updateEvent: async (id: number, formData: FormData): Promise<Event> => {
+    const response = await axiosInstance.put<ApiResponse<Event>>(`/events/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
+  /**
+   * Delete an event (soft delete)
+   */
+  deleteEvent: async (id: number): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/events/${id}`);
+    return response.data;
   },
 
   /**
