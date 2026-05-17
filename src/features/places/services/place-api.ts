@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse, PageResponse } from "@/shared/types/api";
 import { Place, PlaceDetailResponse, PlaceFilterParams } from "../types/place";
@@ -8,7 +7,7 @@ import { Place, PlaceDetailResponse, PlaceFilterParams } from "../types/place";
  */
 export const placeService = {
   /**
-   * Get list of all places
+   * Get list of all places (Basic info)
    */
   getPlacesList: async (categoryId?: number): Promise<Place[]> => {
     const response = await axiosInstance.get<ApiResponse<Place[]>>('/places', {
@@ -18,11 +17,9 @@ export const placeService = {
   },
 
   /**
-   * Search and filter places
+   * Search and filter places (For Users)
    */
   getPlaces: async (params: PlaceFilterParams): Promise<PageResponse<Place>> => {
-    // Backend mong đợi trang được đánh số từ 1 (trang=1 là trang đầu tiên)
-    // Frontend (Truy vấn/Thành phần TanStack) sử dụng chỉ số từ 0
     const adjustedParams = {
       ...params,
       page: (params.page !== undefined ? params.page + 1 : 1),
@@ -45,8 +42,55 @@ export const placeService = {
   },
 
   /**
-   * Get personalized recommendations (Redis Cached)
+   * ADMIN: Get all places for admin dashboard
    */
+  getPlacesAdmin: async (params: {
+    keyword?: string;
+    categoryId?: number;
+    district?: string;
+    page?: number;
+    size?: number;
+    sort?: string;
+  }): Promise<PageResponse<Place>> => {
+    const response = await axiosInstance.get<ApiResponse<PageResponse<Place>>>('/places/admin', {
+      params: {
+        ...params,
+        page: params.page || 1,
+        size: params.size || 10
+      }
+    });
+    return response.data.data;
+  },
+
+  /**
+   * ADMIN: Create a new place
+   */
+  createPlace: async (formData: FormData): Promise<Place> => {
+    const response = await axiosInstance.post<ApiResponse<Place>>('/places', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data.data;
+  },
+
+  /**
+   * ADMIN: Update an existing place
+   */
+  updatePlace: async (id: number, formData: FormData): Promise<Place> => {
+    const response = await axiosInstance.put<ApiResponse<Place>>(`/places/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data.data;
+  },
+
+  /**
+   * ADMIN: Delete a place (soft delete)
+   */
+  deletePlace: async (id: number): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/places/${id}`);
+    return response.data;
+  },
+
+  // ... (User related methods like recommendations, reviews, favorites)
   getRecommendations: async (userLat?: number, userLng?: number, limit: number = 6): Promise<Place[]> => {
     const response = await axiosInstance.get<ApiResponse<Place[]>>('/recommendations', {
       params: { userLat, userLng, limit }
@@ -54,41 +98,26 @@ export const placeService = {
     return response.data.data;
   },
 
-  /**
-   * Submit a review for a place
-   */
   submitReview: async (data: { placeId: number; rating: number; comment: string }): Promise<any> => {
     const response = await axiosInstance.post<ApiResponse<any>>('/reviews', data);
     return response.data.data;
   },
 
-  /**
-   * Get reviews written by the current user
-   */
   getMyReviews: async (): Promise<any[]> => {
     const response = await axiosInstance.get<ApiResponse<any[]>>('/reviews/my');
     return response.data.data;
   },
 
-  /**
-   * Toggle favorite status of a place
-   */
   toggleFavorite: async (placeId: number): Promise<any> => {
     const response = await axiosInstance.post<ApiResponse<any>>(`/saved-places/${placeId}`);
     return response.data.data;
   },
 
-  /**
-   * Check if a place is favorited by the current user
-   */
   checkFavoriteStatus: async (placeId: number): Promise<boolean> => {
     const response = await axiosInstance.get<ApiResponse<boolean>>(`/saved-places/check/${placeId}`);
     return response.data.data;
   },
 
-  /**
-   * Get favorited places for the current user
-   */
   getSavedPlaces: async (): Promise<any[]> => {
     const response = await axiosInstance.get<ApiResponse<any[]>>('/saved-places/my');
     return response.data.data;

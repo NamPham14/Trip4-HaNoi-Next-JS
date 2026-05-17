@@ -266,15 +266,25 @@ export default function EventManagementPage() {
           </div>
 
           <div className="space-y-1">
-            <Label>Địa điểm <span className="text-red-500">*</span></Label>
+            <Label className="font-bold text-gray-700">Địa điểm tổ chức <span className="text-red-500">*</span></Label>
             <Controller
               name="placeId"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={formLoading}>
-                  <SelectTrigger><SelectValue placeholder="Chọn địa điểm..." /></SelectTrigger>
-                  <SelectContent>
-                    {places.map(place => <SelectItem key={place.id} value={place.id.toString()}>{place.name}</SelectItem>)}
+                  <SelectTrigger className="h-11 border-2 border-gray-200 bg-gray-100/50 hover:bg-gray-100 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-gray-800">
+                    <SelectValue placeholder="-- Vui lòng chọn địa điểm tổ chức --" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl rounded-xl p-1">
+                    {places.map(place => (
+                        <SelectItem 
+                            key={place.id} 
+                            value={place.id.toString()} 
+                            className="font-medium text-gray-700 cursor-pointer focus:bg-primary/10 focus:text-primary py-2.5 rounded-lg"
+                        >
+                            {place.name}
+                        </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               )}
