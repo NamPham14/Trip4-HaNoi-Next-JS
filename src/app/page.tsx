@@ -1,94 +1,250 @@
 "use client";
 
 import React from "react";
-import { Search, MapPin, Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight, MapPin, Star, Heart, Clock, ChevronRight, Compass } from "lucide-react";
 import { RecommendationList } from "@/features/places/components/recommendation-list";
+import { PopularPlacesList } from "@/features/places/components/popular-places-list";
 import { Navbar } from "@/shared/components/navbar";
 import { Button } from "@/shared/components/ui/button";
+import { AIQuickPlanner } from "@/shared/components/AIQuickPlanner";
+import Footer from "@/shared/components/Footer";
+import { useEvents } from "@/features/events/hooks/use-events";
+import { EventCard } from "@/features/events/components/event-card";
+import { Event } from "@/features/events/types/event";
+import Link from "next/link";
+import { useUser } from "@/features/auth/hooks/use-auth";
 
 export default function HomePage() {
+  const { isAuthenticated } = useUser();
   return (
-    <div className="min-h-screen bg-hanoi-cream">
+    <div className="min-h-screen bg-hanoi-cream selection:bg-hanoi-red selection:text-white">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative py-12 md:py-20 px-4 overflow-hidden">
-        <div className="container mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-hanoi-gold/40 border border-hanoi-gold text-hanoi-red text-[10px] md:text-xs font-bold mb-6 animate-bounce">
-            <Sparkles className="h-3 w-3" />
-            Khám phá Hà Nội theo cách của bạn
+      <section className="relative min-h-[90vh] flex items-center justify-center pt-20 pb-12 px-4 overflow-hidden">
+        {/* Background Image with Cinematic Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000&auto=format&fit=crop" 
+            alt="Hanoi Ancient Street" 
+            className="w-full h-full object-cover scale-105 animate-slow-zoom"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-hanoi-cream" />
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+        </div>
+
+        <div className="container mx-auto relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-hanoi-gold text-xs font-black uppercase tracking-widest mb-8 animate-fade-in-down">
+            <Sparkles className="h-4 w-4 fill-current" />
+            AI-Powered Personal Travel Planner
           </div>
-          <h1 className="text-4xl md:text-7xl font-bold text-zinc-900 mb-6 tracking-tight">
-            Thủ Đô Trong <br className="hidden md:block" />
-            <span className="text-hanoi-red">Tầm Tay Bạn</span>
+          
+          <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-none animate-fade-in">
+            Khám phá Hà Nội <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-hanoi-gold via-white to-hanoi-gold bg-300% animate-gradient-text">
+              Theo Cách Riêng
+            </span>
           </h1>
-          <p className="max-w-2xl mx-auto text-zinc-600 text-base md:text-lg mb-8 md:mb-10 leading-relaxed px-2">
-            Hệ thống gợi ý địa điểm thông minh tích hợp AI, giúp bạn tìm thấy những quán ngon, 
-            điểm đến đậm chất văn hóa dựa trên sở thích và vị trí của chính bạn.
+          
+          <p className="max-w-2xl mx-auto text-white/80 text-lg md:text-xl mb-12 font-medium leading-relaxed px-4 animate-fade-in-up">
+            Trải nghiệm hành trình du lịch thông minh, nơi di sản ngàn năm giao thoa cùng công nghệ tương lai.
           </p>
 
-          {/* Quick Search Bar */}
-          <div className="max-w-3xl mx-auto bg-white p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-2 border border-zinc-100 mx-2 md:mx-auto">
-            <div className="flex-1 flex items-center px-4 gap-3 border-b md:border-b-0 md:border-r border-zinc-50 md:border-zinc-100">
-              <Search className="h-5 w-5 text-zinc-400 shrink-0" />
-              <input 
-                type="text" 
-                placeholder="Bạn muốn đi đâu hôm nay?" 
-                className="w-full py-3 md:py-4 outline-none text-zinc-700 font-medium text-sm md:text-base"
-              />
-            </div>
-            <div className="flex-1 flex items-center px-4 gap-3">
-              <MapPin className="h-5 w-5 text-hanoi-red shrink-0" />
-              <select className="w-full py-3 md:py-4 outline-none bg-transparent text-zinc-700 font-medium text-sm md:text-base appearance-none">
-                <option>Tất cả các quận</option>
-                <option>Hoàn Kiếm</option>
-                <option>Ba Đình</option>
-                <option>Cầu Giấy</option>
-                <option>Tây Hồ</option>
-              </select>
-            </div>
-            <Button className="bg-hanoi-red hover:bg-[#6D1616] text-white w-full md:w-auto px-8 py-6 md:py-7 rounded-xl font-bold transition-all text-sm md:text-base">
-              Tìm kiếm ngay
-            </Button>
+          <div className="animate-fade-in-up-delay">
+            <AIQuickPlanner />
           </div>
         </div>
 
-        {/* Abstract Background Elements */}
-        <div className="absolute top-20 left-[-10%] w-[50%] h-[50%] bg-hanoi-red/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-[-10%] w-[40%] h-[40%] bg-hanoi-gold/20 blur-[100px] rounded-full" />
+        {/* Decorative Elements */}
+        <div className="absolute bottom-10 left-10 hidden lg:block animate-bounce-slow">
+          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/10">
+            <div className="h-10 w-10 bg-hanoi-red rounded-full flex items-center justify-center">
+              <MapPin className="h-5 w-5 text-white" />
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-black text-hanoi-gold uppercase">Địa điểm hot nhất</p>
+              <p className="text-sm font-bold text-white">Phố Cổ Hà Nội</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Recommendations Section */}
-      <section className="py-16 px-4 bg-white/50 backdrop-blur-sm border-t border-zinc-100">
-        <div className="container mx-auto">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-zinc-900 mb-2">Gợi ý riêng cho bạn</h2>
-              <p className="text-zinc-500 font-medium">Dựa trên gu ẩm thực và lịch sử di chuyển của bạn</p>
-            </div>
-            <Button variant="link" className="text-hanoi-red font-bold hover:no-underline underline-offset-4 decoration-2">
-              Xem tất cả
-            </Button>
-          </div>
+      {/* Featured Places Section */}
+      <section className="py-24 px-4 relative overflow-hidden">
+        <div className="container mx-auto relative z-10">
           
-          <RecommendationList />
+          {isAuthenticated ? (
+            <>
+              {/* Logged in: Recommendations Section */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-red/10 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+                    <Star className="h-3 w-3 fill-current" /> Dành riêng cho bạn
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter">
+                    Gợi ý từ <span className="text-hanoi-red italic">Trip4Hanoi</span>
+                  </h2>
+                </div>
+              </div>
+              
+              <RecommendationList limit={8} />
+
+              {/* Logged in: Popular Places Section */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between mt-24 mb-16 gap-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-red/10 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+                    <Compass className="h-3 w-3" /> Xu hướng
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter">
+                    Các địa điểm <span className="text-hanoi-red italic">phổ biến</span>
+                  </h2>
+                </div>
+                <Link href="/explore">
+                  <Button variant="ghost" className="text-hanoi-red font-black hover:bg-hanoi-red/5 rounded-2xl group text-lg">
+                    Khám phá thêm <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
+              
+              <PopularPlacesList limit={8} />
+            </>
+          ) : (
+            <>
+              {/* Logged out: Only Popular Places Section */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-red/10 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+                    <Star className="h-3 w-3 fill-current" /> Điểm đến tiêu biểu
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter">
+                    Khám phá <span className="text-hanoi-red italic">Hà Nội</span>
+                  </h2>
+                </div>
+              </div>
+              
+              <PopularPlacesList limit={8} />
+              
+              <div className="mt-16 text-center">
+                <Link href="/explore">
+                  <Button className="bg-zinc-900 hover:bg-hanoi-red text-white font-black px-10 h-16 rounded-2xl shadow-2xl transition-all">
+                    Khám phá thêm hàng trăm địa điểm <ChevronRight className="ml-2 h-6 w-6" />
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
+
+        </div>
+        
+        {/* Background Patterns */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-hanoi-gold/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
+        <div className="absolute top-40 left-10 opacity-[0.03] pointer-events-none select-none">
+          <span className="text-[15vw] font-black italic tracking-tighter text-hanoi-red">HANOI</span>
         </div>
       </section>
 
       {/* Events Section */}
       <FeaturedEventsSection />
 
+      {/* Itinerary Template Section (Placeholder style) */}
+      <section className="py-24 px-4 bg-zinc-900 text-white overflow-hidden relative">
+        <div className="container mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 italic">
+              Lịch trình <span className="text-hanoi-gold">đã được chọn lọc</span>
+            </h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
+              Từ tour ẩm thực phố cổ đến hành trình văn hóa tâm linh, chúng tôi đã chuẩn bị sẵn những trải nghiệm tuyệt vời nhất cho bạn.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: "Hà Nội - Một ngày bình yên", time: "12 giờ", budget: "500k - 1tr", img: "https://images.unsplash.com/photo-1555921015-5532091f6026?q=80&w=800" },
+              { title: "Thiên đường ẩm thực Phố Cổ", time: "6 giờ", budget: "300k - 500k", img: "https://images.unsplash.com/photo-1562307534-a03738d2a81a?q=80&w=800" },
+              { title: "Hà Nội về đêm rực rỡ", time: "5 giờ", budget: "400k - 800k", img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800" },
+            ].map((item, idx) => (
+              <div key={idx} className="group relative aspect-[4/5] rounded-[40px] overflow-hidden cursor-pointer">
+                <img src={item.img} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute bottom-0 p-8 w-full">
+                  <div className="flex gap-2 mb-3">
+                    <span className="bg-hanoi-gold/20 backdrop-blur-md border border-hanoi-gold/30 text-hanoi-gold text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                      {item.time}
+                    </span>
+                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                      {item.budget}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black mb-4 leading-tight group-hover:text-hanoi-gold transition-colors">{item.title}</h3>
+                  <Button className="w-full bg-white text-zinc-900 font-black rounded-2xl opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                    Xem chi tiết
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Traditional Patterns Background */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#F5E6CA 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
+      </section>
+
+      {/* Community / Testimonials */}
+      <section className="py-24 px-4 bg-hanoi-cream overflow-hidden">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-gold/30 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+                <Heart className="h-3 w-3 fill-current" /> Cộng đồng Trip4Hanoi
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter mb-8 leading-tight">
+                Cùng nhau chia sẻ <br />
+                <span className="text-hanoi-red italic">khoảnh khắc Hà Nội</span>
+              </h2>
+              <div className="space-y-6 mb-10">
+                <blockquote className="bg-white/50 backdrop-blur-md p-8 rounded-[32px] border border-hanoi-gold/30 shadow-xl relative">
+                  <span className="absolute -top-6 left-8 text-8xl text-hanoi-gold font-serif opacity-50">“</span>
+                  <p className="text-xl font-medium text-zinc-800 italic relative z-10">
+                    Chưa bao giờ việc lên kế hoạch đi chơi Hà Nội lại dễ dàng đến thế. AI của Trip4Hanoi gợi ý những quán cà phê thực sự đúng gu mình!
+                  </p>
+                  <div className="flex items-center gap-4 mt-6">
+                    <div className="h-12 w-12 bg-hanoi-red rounded-full overflow-hidden border-2 border-white shadow-lg">
+                      <img src="https://i.pravatar.cc/150?u=1" alt="" />
+                    </div>
+                    <div>
+                      <p className="font-black text-zinc-900 text-sm">Minh Anh</p>
+                      <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Travel Enthusiast</p>
+                    </div>
+                  </div>
+                </blockquote>
+              </div>
+              <Button className="bg-zinc-900 text-white font-black px-10 h-16 rounded-2xl shadow-2xl hover:bg-hanoi-red transition-all">
+                Tham gia cộng đồng ngay
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 relative">
+              <div className="space-y-4 pt-12">
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=600&fit=crop" className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500" alt="" />
+                <img src="https://images.unsplash.com/photo-1555921015-5532091f6026?w=400&h=400&fit=crop" className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500" alt="" />
+              </div>
+              <div className="space-y-4">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=400&fit=crop" className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500" alt="" />
+                <img src="https://images.unsplash.com/photo-1562307534-a03738d2a81a?w=400&h=600&fit=crop" className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500" alt="" />
+              </div>
+              
+              {/* Decorative particles */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 bg-hanoi-red/20 blur-[60px] rounded-full" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
 }
-
-import { useEvents } from "@/features/events/hooks/use-events";
-import Footer from "@/shared/components/Footer";
-import { EventCard } from "@/features/events/components/event-card";
-import { Event } from "@/features/events/types/event";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 function FeaturedEventsSection() {
   const { data, isLoading } = useEvents({ page: 0, size: 3 });
@@ -97,45 +253,44 @@ function FeaturedEventsSection() {
   if (!isLoading && events.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24 px-4 bg-zinc-50 border-t border-zinc-100 overflow-hidden relative">
+    <section className="py-24 px-4 bg-white border-y border-hanoi-gold/20 overflow-hidden relative">
       <div className="container mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-red/10 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
-              <Sparkles className="h-3 w-3" /> Đừng bỏ lỡ
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-gold/30 text-hanoi-red text-[10px] font-black uppercase tracking-widest mb-4">
+              <Sparkles className="h-3 w-3 fill-current" /> Đừng bỏ lỡ
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tighter">
-              Sự kiện đang <span className="text-hanoi-red">diễn ra</span>
+            <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter">
+              Sự kiện đang <span className="text-hanoi-red italic underline decoration-hanoi-gold/50 underline-offset-8">diễn ra</span>
             </h2>
-            <p className="text-zinc-500 font-medium max-w-xl">
-              Hà Nội luôn sôi động với các lễ hội truyền thống, triển lãm nghệ thuật và các sự kiện giải trí đặc sắc.
-            </p>
           </div>
           <Link href="/events">
-            <Button className="bg-zinc-900 hover:bg-hanoi-red text-white font-black px-8 h-14 rounded-2xl shadow-xl shadow-zinc-900/10 transition-all active:scale-95">
-              Xem tất cả sự kiện <ArrowRight className="ml-2 h-4 w-4" />
+            <Button className="bg-zinc-900 hover:bg-hanoi-red text-white font-black px-8 h-14 rounded-2xl shadow-xl transition-all active:scale-95 group">
+              Tất cả sự kiện <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 opacity-50">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-[32px] aspect-[4/5] animate-pulse" />
+              <div key={i} className="bg-zinc-100 rounded-[40px] aspect-[4/5] animate-pulse" />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((event: Event) => (
-              <EventCard key={event.id} event={event} />
+              <div key={event.id} className="group cursor-pointer">
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         )}
       </div>
       
-      {/* Decoration */}
-      <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none select-none">
-        <span className="text-[20vw] font-black italic tracking-tighter">HANOI</span>
+      {/* Hanoi Decoration */}
+      <div className="absolute bottom-[-5%] right-[-5%] p-20 opacity-[0.02] pointer-events-none select-none">
+        <span className="text-[25vw] font-black italic tracking-tighter text-hanoi-red leading-none">HANOI</span>
       </div>
     </section>
   );

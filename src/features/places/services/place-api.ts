@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse, PageResponse } from "@/shared/types/api";
 import { Place, PlaceDetailResponse, PlaceFilterParams } from "../types/place";
@@ -6,6 +7,16 @@ import { Place, PlaceDetailResponse, PlaceFilterParams } from "../types/place";
  * Service for fetching place data
  */
 export const placeService = {
+  /**
+   * Get list of all places
+   */
+  getPlacesList: async (categoryId?: number): Promise<Place[]> => {
+    const response = await axiosInstance.get<ApiResponse<Place[]>>('/places', {
+      params: { categoryId }
+    });
+    return response.data.data;
+  },
+
   /**
    * Search and filter places
    */
@@ -36,9 +47,9 @@ export const placeService = {
   /**
    * Get personalized recommendations (Redis Cached)
    */
-  getRecommendations: async (userLat?: number, userLng?: number): Promise<Place[]> => {
+  getRecommendations: async (userLat?: number, userLng?: number, limit: number = 6): Promise<Place[]> => {
     const response = await axiosInstance.get<ApiResponse<Place[]>>('/recommendations', {
-      params: { userLat, userLng }
+      params: { userLat, userLng, limit }
     });
     return response.data.data;
   },

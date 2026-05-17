@@ -93,12 +93,12 @@ export const useSubmitReview = () => {
 /**
  * Hook for fetching recommended places
  */
-export const useRecommendations = () => {
+export const useRecommendations = (limit: number = 6) => {
   const { lat, lng } = useLocationStore();
   
   return useQuery({
-    queryKey: placeKeys.recommendations(lat || undefined, lng || undefined),
-    queryFn: () => placeService.getRecommendations(lat || undefined, lng || undefined),
+    queryKey: [...placeKeys.recommendations(lat || undefined, lng || undefined), limit],
+    queryFn: () => placeService.getRecommendations(lat || undefined, lng || undefined, limit),
     staleTime: 30 * 60 * 1000, // 30 minutes (Matches Backend Redis TTL)
   });
 };
@@ -140,5 +140,16 @@ export const useMyReviews = (enabled: boolean = true) => {
     queryKey: placeKeys.myReviews(),
     queryFn: () => placeService.getMyReviews(),
     enabled: enabled
+  });
+};
+
+/**
+ * Hook for fetching list of all places
+ */
+export const usePlacesList = (categoryId?: number) => {
+  return useQuery({
+    queryKey: [...placeKeys.lists(), { categoryId }],
+    queryFn: () => placeService.getPlacesList(categoryId),
+    staleTime: 5 * 60 * 1000,
   });
 };
