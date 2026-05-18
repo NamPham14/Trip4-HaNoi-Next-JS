@@ -11,13 +11,13 @@ export interface CategoryRequest {
 }
 
 export const categoryService = {
-  getAllCategories: async (params: { keyword?: string; page?: number; size?: number; sort?: string }) => {
+  getAllCategories: async (params?: { keyword?: string; page?: number; size?: number; sort?: string }) => {
     const response = await axiosInstance.get<ApiResponse<PageResponse<Category>>>('/categories', {
       params: {
-        keyword: params.keyword,
-        page: params.page || 1,
-        size: params.size || 10,
-        sort: params.sort
+        keyword: params?.keyword,
+        page: params?.page || 1,
+        size: params?.size || 10,
+        sort: params?.sort
       }
     });
     return response.data.data;
