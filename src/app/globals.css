@@ -30,6 +30,8 @@
   --color-hanoi-cream: #F9F6F2;
   --color-hanoi-gold: #F5E6CA;
 
+  --breakpoint-xs: 480px;
+
   --animate-slow-zoom: slow-zoom 20s ease-in-out infinite;
   --animate-gradient-text: gradient-text 8s linear infinite;
   --animate-fade-in: fade-in 1s ease-out forwards;

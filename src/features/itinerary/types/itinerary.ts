@@ -27,6 +27,11 @@ export interface Itinerary {
   budget: number;
   days: number;
   numberOfPeople: number;
+  isFeatured: boolean;
+  isSample: boolean;
+  description?: string;
+  coverImage?: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   createdAt: string;
   itineraryDays: DayItinerary[];
 }
@@ -38,6 +43,10 @@ export interface CreateItineraryRequest {
   numberOfPeople: number;
   categoryNames?: string[];
   startDate?: string;
+  description?: string;
+  coverImage?: string;
+  isSample?: boolean;
+  status?: string;
 }
 
 export interface UpdateFullItineraryRequest {

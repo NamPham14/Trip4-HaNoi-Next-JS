@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -13,12 +14,19 @@ import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/shared/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { AdminItineraryModal } from '@/features/itinerary/components/AdminItineraryModal';
+import { Edit, CheckCircle } from 'lucide-react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 
 export default function ItineraryManagementPage() {
   const router = useRouter();
+  const { user: currentUser } = useUser();
   const [data, setData] = useState<Itinerary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSampleFilter, setIsSampleFilter] = useState<boolean | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
@@ -26,6 +34,7 @@ export default function ItineraryManagementPage() {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState<Itinerary | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -34,6 +43,8 @@ export default function ItineraryManagementPage() {
       setLoading(true);
       const res = await itineraryService.getAllItinerariesAdmin({
         keyword: searchTerm,
+        isSample: isSampleFilter,
+        status: statusFilter,
         page: pageIndex + 1,
         size: pageSize,
       });
@@ -45,7 +56,7 @@ export default function ItineraryManagementPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, pageIndex]);
+  }, [searchTerm, pageIndex, isSampleFilter, statusFilter]);
 
   useEffect(() => {
     const timer = setTimeout(() => fetchItineraries(), 500);
@@ -67,6 +78,19 @@ export default function ItineraryManagementPage() {
     }
   };
 
+  const handleQuickPublish = async (itinerary: Itinerary) => {
+    try {
+      await itineraryService.updateItinerary(itinerary.id, {
+        status: 'PUBLISHED'
+      });
+      toast.success("Đã công khai lịch trình!");
+      // QUAN TRỌNG: Gọi lại fetchItineraries để UI cập nhật
+      fetchItineraries();
+    } catch (error) {
+      toast.error("Không thể công khai lịch trình");
+    }
+  };
+
   const columns: ColumnDef<Itinerary>[] = [
     { 
       accessorKey: "title", 
@@ -74,19 +98,34 @@ export default function ItineraryManagementPage() {
       cell: ({ row }) => (
         <div className="flex flex-col">
             <span className="font-bold text-gray-900">{row.original.title}</span>
-            {row.original.isFeatured && (
+            {row.original.isSample && (
                 <div className="flex items-center gap-1 text-[10px] text-hanoi-red font-black uppercase mt-1">
-                    <Sparkles size={10} /> Đề xuất bởi Admin
+                    <Sparkles size={10} /> Lịch trình mẫu
                 </div>
             )}
         </div>
       )
     },
     { 
+      accessorKey: "status", 
+      header: "Trạng thái",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <Badge 
+            variant={status === 'PUBLISHED' ? "default" : status === 'DRAFT' ? "outline" : "secondary"}
+            className={status === 'PUBLISHED' ? "bg-green-500 hover:bg-green-600" : ""}
+          >
+            {status}
+          </Badge>
+        );
+      }
+    },
+    { 
       accessorKey: "userName", 
       header: "Người tạo",
       cell: ({ row }) => (
-        <Badge variant={row.original.isFeatured ? "default" : "outline"} className={row.original.isFeatured ? "bg-hanoi-red" : ""}>
+        <Badge variant={row.original.isSample ? "default" : "outline"} className={row.original.isSample ? "bg-hanoi-red" : ""}>
             {row.original.userName || "N/A"}
         </Badge>
       )
@@ -119,18 +158,40 @@ export default function ItineraryManagementPage() {
     {
       id: "actions",
       header: () => <div className="text-right">Thao tác</div>,
-      cell: ({ row }) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => { setSelectedItinerary(row.original); setIsDetailOpen(true); }}>
-            <Eye size={16} />
-          </Button>
-          {row.original.isFeatured && (
-            <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => { setSelectedItinerary(row.original); setIsDeleteOpen(true); }}>
-                <Trash2 size={16} />
+      cell: ({ row }) => {
+        const itinerary = row.original;
+        // Quyền quản trị: Nếu là Sample HOẶC được tạo bởi Admin hiện tại (hoặc bất kỳ ai có role ADMIN)
+        // Vì đây là trang Admin, chúng ta cho phép sửa bất kỳ Sample nào hoặc do chính user admin này tạo.
+        const canManage = itinerary.isSample || itinerary.userName?.toLowerCase().includes('admin');
+
+        return (
+          <div className="flex justify-end gap-1">
+            {/* Quick Publish - Only if can manage and is Draft */}
+            {canManage && itinerary.status === 'DRAFT' && (
+              <Button variant="ghost" size="icon" className="text-green-600 hover:bg-green-50" onClick={() => handleQuickPublish(itinerary)} title="Công khai nhanh">
+                <CheckCircle size={16} />
+              </Button>
+            )}
+
+            {/* View - Always */}
+            <Button variant="ghost" size="icon" onClick={() => { setSelectedItinerary(itinerary); setIsDetailOpen(true); }}>
+              <Eye size={16} />
             </Button>
-          )}
-        </div>
-      ),
+
+            {/* Edit & Delete - Only if can manage */}
+            {canManage && (
+              <>
+                <Button variant="ghost" size="icon" className="text-blue-500 hover:bg-blue-50" onClick={() => { setSelectedItinerary(itinerary); setIsAdminModalOpen(true); }}>
+                  <Edit size={16} />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => { setSelectedItinerary(itinerary); setIsDeleteOpen(true); }}>
+                  <Trash2 size={16} />
+                </Button>
+              </>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -141,22 +202,59 @@ export default function ItineraryManagementPage() {
           <h1 className="text-2xl font-bold flex items-center gap-2"><Calendar className="text-primary" />Quản lý Lịch trình (Itineraries)</h1>
           <p className="text-gray-500">Giám sát lịch trình người dùng và tạo lịch trình mẫu quảng bá.</p>
         </div>
-        <Button onClick={() => router.push('/planner')} className="gap-2 bg-hanoi-red hover:bg-[#6D1616]">
+        <Button onClick={() => { setSelectedItinerary(null); setIsAdminModalOpen(true); }} className="gap-2 bg-hanoi-red hover:bg-[#6D1616]">
             <Plus size={18} /> Tạo lịch trình mẫu
         </Button>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border shadow-sm mb-6 flex justify-between items-center">
-        <div className="relative max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <Input 
-            className="pl-10 h-11" 
-            placeholder="Tìm theo tên lịch trình, người tạo..." 
-            value={searchTerm} 
-            onChange={(e) => { setSearchTerm(e.target.value); setPageIndex(0); }} 
-          />
+      <div className="bg-white p-6 rounded-xl border shadow-sm mb-6 flex flex-wrap gap-4 justify-between items-center">
+        <div className="flex flex-wrap gap-4 items-center flex-1">
+          <div className="relative max-w-sm w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Input 
+              className="pl-10 h-11" 
+              placeholder="Tìm theo tên lịch trình, người tạo..." 
+              value={searchTerm} 
+              onChange={(e) => { setSearchTerm(e.target.value); setPageIndex(0); }} 
+            />
+          </div>
+
+          <Select 
+            value={isSampleFilter === undefined ? "all" : isSampleFilter.toString()} 
+            onValueChange={(val) => {
+              setIsSampleFilter(val === "all" ? undefined : val === "true");
+              setPageIndex(0);
+            }}
+          >
+            <SelectTrigger className="w-[180px] h-11">
+              <SelectValue placeholder="Loại lịch trình" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả loại</SelectItem>
+              <SelectItem value="true">Lịch trình mẫu</SelectItem>
+              <SelectItem value="false">Lịch trình User</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select 
+            value={statusFilter || "all"} 
+            onValueChange={(val) => {
+              setStatusFilter(val === "all" ? undefined : val);
+              setPageIndex(0);
+            }}
+          >
+            <SelectTrigger className="w-[180px] h-11">
+              <SelectValue placeholder="Trạng thái" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả trạng thái</SelectItem>
+              <SelectItem value="DRAFT">Bản nháp</SelectItem>
+              <SelectItem value="PUBLISHED">Công khai</SelectItem>
+              <SelectItem value="ARCHIVED">Lưu trữ</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <div className="text-sm font-medium">Tổng số: <strong className="text-primary">{totalElements}</strong> lịch trình</div>
+        <div className="text-sm font-medium whitespace-nowrap">Tổng số: <strong className="text-primary">{totalElements}</strong> lịch trình</div>
       </div>
 
       <DataTable 
@@ -176,6 +274,12 @@ export default function ItineraryManagementPage() {
         fields={[
             { label: "ID", key: "id" },
             { label: "Tên lịch trình", key: "title" },
+            { label: "Mô tả", key: "description" },
+            { 
+              label: "Ảnh bìa", 
+              key: "coverImage", 
+              render: (val: string) => val ? <img src={val} className="w-full h-40 object-cover rounded-lg mt-2" alt="Cover" /> : "N/A"
+            },
             { label: "Người tạo", key: "userName" },
             { label: "Số ngày", key: "days" },
             { label: "Số người", key: "numberOfPeople" },
@@ -218,6 +322,14 @@ export default function ItineraryManagementPage() {
         description="Lịch trình sẽ bị xóa vĩnh viễn khỏi tài khoản của người dùng. Bạn có chắc chắn?" 
         onConfirm={handleDelete} 
         isLoading={deleteLoading} 
+      />
+
+      <AdminItineraryModal
+        key={isAdminModalOpen ? `itinerary-${selectedItinerary?.id || 'new'}` : 'closed'}
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+        itinerary={selectedItinerary}
+        onSuccess={fetchItineraries}
       />
     </div>
   );

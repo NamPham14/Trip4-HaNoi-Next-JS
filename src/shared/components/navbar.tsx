@@ -208,7 +208,7 @@ export const Navbar = () => {
               </Link>
               <Link href="/register" className="hidden sm:block">
                 <Button className="bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-2xl px-6 text-sm shadow-xl shadow-hanoi-red/20 transition-all active:scale-95 border-2 border-transparent">
-                  Bắt đầu
+                  Bắt đầu ngay
                 </Button>
               </Link>
             </div>
@@ -264,7 +264,7 @@ export const Navbar = () => {
                   <Button variant="outline" className="w-full h-16 font-black border-hanoi-gold/50 text-hanoi-red rounded-3xl bg-transparent">Đăng nhập</Button>
                 </Link>
                 <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full h-16 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-3xl">Tham gia</Button>
+                  <Button className="w-full h-16 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-3xl">Bắt đầu ngay</Button>
                 </Link>
               </div>
             )}

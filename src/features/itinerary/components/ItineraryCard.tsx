@@ -16,7 +16,8 @@ export const ItineraryCard: React.FC<ItineraryCardProps> = ({ itinerary }) => {
     "https://images.unsplash.com/photo-1562307534-a03738d2a81a?q=80&w=800",
     "https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=800"
   ];
-  const image = images[itinerary.id % images.length];
+  const placeholderImage = images[itinerary.id % images.length];
+  const image = itinerary.coverImage || placeholderImage;
 
   return (
     <div className="group relative aspect-[4/5] rounded-[40px] overflow-hidden cursor-pointer shadow-2xl">

@@ -7,7 +7,7 @@ export const itineraryService = {
   /**
    * ADMIN: Get all itineraries with pagination
    */
-  getAllItinerariesAdmin: async (params: { page?: number; size?: number; keyword?: string }): Promise<PageResponse<Itinerary>> => {
+  getAllItinerariesAdmin: async (params: { page?: number; size?: number; keyword?: string; isSample?: boolean; status?: string }): Promise<PageResponse<Itinerary>> => {
     const response = await axiosInstance.get<ApiResponse<PageResponse<Itinerary>>>('/itineraries/admin', {
       params: {
         ...params,
@@ -23,6 +23,11 @@ export const itineraryService = {
     return response.data.data;
   },
 
+  getSampleItineraries: async (): Promise<Itinerary[]> => {
+    const response = await axiosInstance.get<ApiResponse<Itinerary[]>>('/itineraries/samples');
+    return response.data.data;
+  },
+
   getMyItineraries: async (): Promise<Itinerary[]> => {
     const response = await axiosInstance.get<ApiResponse<Itinerary[]>>('/itineraries/my');
     return response.data.data;
@@ -35,6 +40,11 @@ export const itineraryService = {
 
   updateFullItinerary: async (data: UpdateFullItineraryRequest): Promise<Itinerary> => {
     const response = await axiosInstance.put<ApiResponse<Itinerary>>('/itineraries/update-full', data);
+    return response.data.data;
+  },
+
+  updateItinerary: async (id: number, data: Partial<CreateItineraryRequest>): Promise<Itinerary> => {
+    const response = await axiosInstance.put<ApiResponse<Itinerary>>(`/itineraries/update-itinerary/${id}`, data);
     return response.data.data;
   },
 

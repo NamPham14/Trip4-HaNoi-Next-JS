@@ -18,20 +18,39 @@ import { StepBasicInfo } from "@/features/itinerary/components/planner/StepBasic
 import { StepInterests } from "@/features/itinerary/components/planner/StepInterests";
 import { StepBudget } from "@/features/itinerary/components/planner/StepBudget";
 import { PlannerProgress } from "@/features/itinerary/components/planner/PlannerProgress";
+import { useUser } from "@/features/auth/hooks/use-auth";
+import { Input } from "@/shared/components/ui/input";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { Label } from "@/shared/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 
 export default function PlannerPage() {
   const router = useRouter();
+  const { user, isAdmin } = useUser();
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const [formData, setFormData] = useState({
+    title: "",
     days: 1,
     people: 1,
     budget: 1000000,
-    selectedCategories: [] as string[]
+    selectedCategories: [] as string[],
+    // Admin only fields
+    description: "",
+    coverImage: "",
+    isSample: false,
+    status: "DRAFT"
   });
+
+  useEffect(() => {
+    if (isAdmin) {
+      setFormData(prev => ({ ...prev, isSample: true }));
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -72,11 +91,16 @@ export default function PlannerPage() {
       const dateStr = now.toLocaleDateString('vi-VN');
       
       const result = await itineraryService.createItinerary({
-        title: `Chuyến đi Hà Nội (${dateStr} ${timeStr})`,
+        title: formData.title || `Chuyến đi Hà Nội (${dateStr} ${timeStr})`,
         budget: formData.budget,
         days: formData.days,
         numberOfPeople: formData.people,
-        categoryNames: formData.selectedCategories
+        categoryNames: formData.selectedCategories,
+        // Admin fields
+        description: formData.description,
+        coverImage: formData.coverImage,
+        isSample: formData.isSample,
+        status: formData.status
       });
       toast.success("Đã tạo lịch trình thành công!");
       router.push(`/itinerary-detail/${result.id}`);
@@ -99,22 +123,48 @@ export default function PlannerPage() {
         <div className="text-center mb-8 md:mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-hanoi-gold/20 text-hanoi-red text-[10px] md:text-xs font-bold mb-4">
             <Sparkles className="h-3.5 w-3.5 md:h-4 md:w-4" />
-            Smart Planner
+            Smart Planner {isAdmin && "(Admin Mode)"}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-3 md:mb-4 tracking-tight">Lên lịch trình du lịch</h1>
           <p className="text-sm md:text-base text-zinc-500 font-medium px-4">Chỉ vài bước đơn giản, chúng tôi sẽ thiết kế chuyến đi hoàn hảo cho bạn</p>
         </div>
 
-        <PlannerProgress step={step} totalSteps={3} />
+        <PlannerProgress step={step} totalSteps={isAdmin ? 4 : 3} />
 
         <div className="bg-white rounded-[32px] md:rounded-[40px] shadow-2xl shadow-hanoi-red/5 p-6 md:p-12 border border-zinc-100 min-h-[450px] md:min-h-[500px] flex flex-col">
           
           {step === 1 && (
-            <StepBasicInfo 
-              days={formData.days} 
-              people={formData.people} 
-              onUpdate={(data) => setFormData(prev => ({ ...prev, ...data }))} 
-            />
+            <div className="space-y-6">
+              {isAdmin && (
+                <div className="space-y-2 mb-4 p-4 bg-hanoi-cream/50 rounded-2xl border border-hanoi-gold/20">
+                  <Label className="text-hanoi-red font-bold">Cấu hình Admin</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="itinerary-title">Tên lịch trình</Label>
+                      <Input 
+                        id="itinerary-title"
+                        placeholder="VD: Tour Phố Cổ 1 ngày..."
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-8">
+                      <Checkbox 
+                        id="is-sample" 
+                        checked={formData.isSample} 
+                        onCheckedChange={(val) => setFormData(prev => ({ ...prev, isSample: !!val }))}
+                      />
+                      <Label htmlFor="is-sample">Lịch trình mẫu (Sample)</Label>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <StepBasicInfo 
+                days={formData.days} 
+                people={formData.people} 
+                onUpdate={(data) => setFormData(prev => ({ ...prev, ...data }))} 
+              />
+            </div>
           )}
 
           {step === 2 && (
@@ -133,6 +183,54 @@ export default function PlannerPage() {
             />
           )}
 
+          {step === 4 && isAdmin && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-6">Nội dung quảng bá</h2>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="description">Mô tả lịch trình (Description)</Label>
+                  <Textarea 
+                    id="description"
+                    placeholder="Viết một đoạn ngắn giới thiệu lịch trình này..."
+                    className="min-h-[120px] rounded-2xl"
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cover-image">Link ảnh minh họa (Cover Image URL)</Label>
+                  <Input 
+                    id="cover-image"
+                    placeholder="https://images.unsplash.com/..."
+                    className="rounded-xl"
+                    value={formData.coverImage}
+                    onChange={(e) => setFormData(prev => ({ ...prev, coverImage: e.target.value }))}
+                  />
+                  {formData.coverImage && (
+                    <div className="mt-2 rounded-2xl overflow-hidden h-40 border">
+                      <img src={formData.coverImage} className="w-full h-full object-cover" alt="Preview" />
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Trạng thái hiển thị</Label>
+                  <Select value={formData.status} onValueChange={(val) => setFormData(prev => ({ ...prev, status: val }))}>
+                    <SelectTrigger className="h-12 rounded-xl">
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DRAFT">Bản nháp (Draft)</SelectItem>
+                      <SelectItem value="PUBLISHED">Công khai (Published)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-zinc-500">
+                    * Bản nháp sẽ không hiển thị cho người dùng bình thường.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Buttons */}
           <div className="mt-8 md:mt-12 flex flex-col-reverse sm:flex-row items-center justify-between gap-3 md:gap-4">
             {step > 1 ? (
@@ -148,11 +246,11 @@ export default function PlannerPage() {
             )}
 
             <Button 
-              onClick={step < 3 ? nextStep : handleGenerate}
+              onClick={(step < 3 || (isAdmin && step < 4)) ? nextStep : handleGenerate}
               disabled={isGenerating}
               className="w-full sm:w-auto px-10 py-6 md:py-7 bg-hanoi-red hover:bg-[#6D1616] text-white rounded-xl md:rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl shadow-hanoi-red/20 order-1 sm:order-2"
             >
-              {step < 3 ? (
+              {(step < 3 || (isAdmin && step < 4)) ? (
                 <>Tiếp tục <ArrowRight className="h-5 w-5" /></>
               ) : (
                 isGenerating ? (
