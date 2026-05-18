@@ -11,4 +11,5 @@ export interface PostManagement {
   username: string;
   userAvatar: string;
   images: { id: number; imageUrl: string }[];
+  taggedPlaces?: { id: number; name: string }[];
 }

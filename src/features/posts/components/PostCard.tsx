@@ -29,11 +29,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md">
+    <div className="bg-white sm:rounded-xl shadow-sm border-y sm:border border-gray-100 overflow-hidden transition-all hover:shadow-md">
       {/* Post Header */}
-      <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border">
+      <div className="p-3 sm:p-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 overflow-hidden border">
             {post.userAvatar ? (
               <Image
                 src={post.userAvatar}
@@ -44,35 +44,35 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <User size={20} />
+                <User size={18} />
               </div>
             )}
           </div>
           <div>
-            <h3 className="font-bold text-gray-900 text-sm">{post.username}</h3>
-            <p className="text-[10px] text-gray-500">
+            <h3 className="font-bold text-gray-900 text-xs sm:text-sm">{post.username}</h3>
+            <p className="text-[9px] sm:text-[10px] text-gray-500">
               {new Date(post.createdAt).toLocaleString('vi-VN')}
             </p>
           </div>
         </div>
-        <button className="text-gray-400 hover:text-gray-600">
-          <MoreHorizontal size={20} />
+        <button className="text-gray-400 hover:text-gray-600 p-1">
+          <MoreHorizontal size={18} />
         </button>
       </div>
 
       {/* Post Content */}
-      <div className="px-4 pb-2">
-        <h2 className="font-bold text-gray-900 mb-1">{post.title}</h2>
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+      <div className="px-3 sm:px-4 pb-2">
+        <h2 className="font-bold text-gray-900 text-sm sm:text-base mb-1">{post.title}</h2>
+        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
           {post.content}
         </p>
 
         {post.taggedPlaces && post.taggedPlaces.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
             {post.taggedPlaces.map((place) => (
               <span
                 key={place.id}
-                className="flex items-center gap-1 text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-bold border border-blue-100"
+                className="flex items-center gap-1 text-[9px] sm:text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-bold border border-blue-100"
               >
                 <MapPin size={10} /> {place.name}
               </span>
@@ -96,6 +96,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
                 alt={post.title}
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           ))}
@@ -103,14 +104,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
       )}
 
       {/* Actions */}
-      <div className="p-4 flex items-center justify-between border-t border-gray-50">
-        <div className="flex items-center gap-6">
+      <div className="px-3 py-2 sm:p-4 flex items-center justify-between border-t border-gray-50">
+        <div className="flex items-center gap-4 sm:gap-6">
           <button
             onClick={handleLike}
             className={`flex items-center gap-1.5 transition-colors ${post.isLiked ? 'text-hanoi-red' : 'text-gray-500 hover:text-hanoi-red'}`}
           >
             <Heart
-              size={20}
+              size={18}
               fill={post.isLiked ? 'currentColor' : 'none'}
             />
             <span className="text-xs font-bold">{post.likeCount}</span>
@@ -119,14 +120,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
             onClick={() => setIsCommentModalOpen(true)}
             className="flex items-center gap-1.5 text-gray-500 hover:text-blue-500 transition-colors"
           >
-            <MessageSquare size={20} />
+            <MessageSquare size={18} />
             <span className="text-xs font-bold">{commentCount}</span>
           </button>
           <button className="text-gray-500 hover:text-green-500 transition-colors">
-            <Share2 size={20} />
+            <Share2 size={18} />
           </button>
         </div>
-        <div className="text-[10px] text-gray-400 font-medium">
+        <div className="text-[9px] sm:text-[10px] text-gray-400 font-medium">
           {post.viewCount} lượt xem
         </div>
       </div>

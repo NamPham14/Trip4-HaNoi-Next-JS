@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Plus, Edit2, Trash2, Loader2, Search, ImageIcon, X, Eye } from 'lucide-react';
+import { Calendar, Plus, Edit2, Trash2, Search, Eye } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { DataTable } from '@/shared/components/ui/table-data';
@@ -12,32 +13,9 @@ import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialo
 import { CrudModal } from '@/shared/components/ui/crud-modal';
 import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
-import { Label } from '@/shared/components/ui/label';
-import { RichTextEditor } from '@/shared/components/RichTextEditor';
 import { placeService } from '@/features/places/services/place-api';
 import { Place } from '@/features/places/types/place';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-// 1. Define Validation Schema
-const eventSchema = z.object({
-  name: z.string().min(5, "Tên sự kiện phải có ít nhất 5 ký tự").max(100, "Tên sự kiện quá dài"),
-  description: z.string().optional(),
-  placeId: z.string().min(1, "Vui lòng chọn địa điểm tổ chức"),
-  startTime: z.string().min(1, "Vui lòng chọn thời gian bắt đầu"),
-  endTime: z.string().min(1, "Vui lòng chọn thời gian kết thúc"),
-}).refine((data) => {
-    const start = new Date(data.startTime);
-    const end = new Date(data.endTime);
-    return end > start;
-}, {
-    message: "Thời gian kết thúc phải sau thời gian bắt đầu",
-    path: ["endTime"],
-});
-
-type EventFormData = z.infer<typeof eventSchema>;
+import { EventForm } from '@/features/events/components/EventForm';
 
 export default function EventManagementPage() {
   // Data State
@@ -56,15 +34,6 @@ export default function EventManagementPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [formLoading, setFormLoading] = useState(false);
-
-  // Form State
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [keepImageIds, setKeepImageIds] = useState<number[]>([]);
-
-  // 2. Setup Form with Validation
-  const { register, handleSubmit, control, reset, setValue, formState: { errors } } = useForm<EventFormData>({
-    resolver: zodResolver(eventSchema),
-  });
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -101,61 +70,13 @@ export default function EventManagementPage() {
     fetchPlaces();
   }, []);
 
-  const onSave = async (data: EventFormData) => {
-    try {
-      setFormLoading(true);
-      const submitData = new FormData();
-      
-      const eventJson = {
-        ...data,
-        placeId: parseInt(data.placeId),
-        startTime: data.startTime.replace('T', ' ') + ":00",
-        endTime: data.endTime.replace('T', ' ') + ":00",
-        keepImageIds: keepImageIds
-      };
-      
-      submitData.append('data', new Blob([JSON.stringify(eventJson)], { type: 'application/json' }));
-      selectedImages.forEach(file => submitData.append('images', file));
-
-      if (selectedEvent) {
-        await eventService.updateEvent(selectedEvent.id, submitData);
-        toast.success("Cập nhật thành công");
-      } else {
-        await eventService.createEvent(submitData);
-        toast.success("Tạo mới thành công");
-      }
-      
-      setIsFormOpen(false);
-      fetchEvents();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Đã có lỗi xảy ra");
-    } finally {
-      setFormLoading(false);
-    }
+  const handleFormSuccess = () => {
+    setIsFormOpen(false);
+    fetchEvents();
   };
 
   const openForm = (event?: Event) => {
     setSelectedEvent(event || null);
-    if (event) {
-      reset({
-        name: event.name,
-        description: event.description || '',
-        placeId: event.placeId?.toString() || '',
-        startTime: event.startTime ? event.startTime.replace(' ', 'T').substring(0, 16) : '',
-        endTime: event.endTime ? event.endTime.replace(' ', 'T').substring(0, 16) : '',
-      });
-      setKeepImageIds(event.images?.map(img => img.id) || []);
-    } else {
-      reset({
-        name: '',
-        description: '',
-        placeId: '',
-        startTime: '',
-        endTime: '',
-      });
-      setKeepImageIds([]);
-    }
-    setSelectedImages([]);
     setIsFormOpen(true);
   };
 
@@ -244,90 +165,18 @@ export default function EventManagementPage() {
       />
 
       {/* Form Modal */}
-      <CrudModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={selectedEvent ? "Cập nhật" : "Thêm mới"}>
-        <form onSubmit={handleSubmit(onSave)} className="space-y-4 max-h-[70vh] overflow-y-auto px-1 custom-scrollbar">
-          <div className="space-y-1">
-            <Label>Tên sự kiện <span className="text-red-500">*</span></Label>
-            <Input {...register("name")} placeholder="Nhập tên..." disabled={formLoading} />
-            {errors.name && <p className="text-[10px] text-red-500">{errors.name.message}</p>}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label>Bắt đầu <span className="text-red-500">*</span></Label>
-              <Input type="datetime-local" {...register("startTime")} disabled={formLoading} />
-              {errors.startTime && <p className="text-[10px] text-red-500">{errors.startTime.message}</p>}
-            </div>
-            <div className="space-y-1">
-              <Label>Kết thúc <span className="text-red-500">*</span></Label>
-              <Input type="datetime-local" {...register("endTime")} disabled={formLoading} />
-              {errors.endTime && <p className="text-[10px] text-red-500">{errors.endTime.message}</p>}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <Label className="font-bold text-gray-700">Địa điểm tổ chức <span className="text-red-500">*</span></Label>
-            <Controller
-              name="placeId"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value} disabled={formLoading}>
-                  <SelectTrigger className="h-11 border-2 border-gray-200 bg-gray-100/50 hover:bg-gray-100 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-gray-800">
-                    <SelectValue placeholder="-- Vui lòng chọn địa điểm tổ chức --" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl rounded-xl p-1">
-                    {places.map(place => (
-                        <SelectItem 
-                            key={place.id} 
-                            value={place.id.toString()} 
-                            className="font-medium text-gray-700 cursor-pointer focus:bg-primary/10 focus:text-primary py-2.5 rounded-lg"
-                        >
-                            {place.name}
-                        </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.placeId && <p className="text-[10px] text-red-500">{errors.placeId.message}</p>}
-          </div>
-
-          <div className="space-y-1">
-            <Label>Mô tả</Label>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => <RichTextEditor value={field.value || ''} onChange={field.onChange} />}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Hình ảnh</Label>
-            <div className="grid grid-cols-4 gap-2">
-                {selectedEvent?.images?.filter(img => keepImageIds.includes(img.id)).map(img => (
-                    <div key={img.id} className="relative aspect-square border rounded overflow-hidden">
-                        <img src={img.imageUrl} className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => setKeepImageIds(prev => prev.filter(id => id !== img.id))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
-                    </div>
-                ))}
-                {selectedImages.map((file, idx) => (
-                    <div key={idx} className="relative aspect-square border rounded overflow-hidden">
-                        <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
-                    </div>
-                ))}
-                <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded cursor-pointer hover:border-primary">
-                    <ImageIcon size={18} className="text-gray-400" />
-                    <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => e.target.files && setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)])} />
-                </label>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-white">
-            <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>Hủy</Button>
-            <Button type="submit" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Lưu</Button>
-          </div>
-        </form>
+      <CrudModal 
+        isOpen={isFormOpen} 
+        onClose={() => setIsFormOpen(false)} 
+        title={selectedEvent ? "Cập nhật sự kiện" : "Thêm mới sự kiện"}
+      >
+        <EventForm 
+          key={selectedEvent?.id || 'new'}
+          selectedEvent={selectedEvent} 
+          places={places} 
+          onSuccess={handleFormSuccess} 
+          onCancel={() => setIsFormOpen(false)} 
+        />
       </CrudModal>
 
       <DeleteConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={async () => {

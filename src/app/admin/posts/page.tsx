@@ -22,11 +22,11 @@ import { ColumnDef } from '@tanstack/react-table';
 import { postManagementService } from '@/features/places/services/post-management-api';
 import { PostManagement, PostStatus } from '@/features/places/types/post-management';
 import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialog';
-import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
 import { Label } from '@/shared/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import Image from 'next/image';
+import { PostApprovalModal } from '@/features/posts/components/PostApprovalModal';
 
 export default function PostManagementPage() {
   const [data, setData] = useState<PostManagement[]>([]);
@@ -39,7 +39,7 @@ export default function PostManagementPage() {
   const [totalElements, setTotalElements] = useState(0);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isApprovalOpen, setIsApprovalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<PostManagement | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -67,17 +67,9 @@ export default function PostManagementPage() {
     return () => clearTimeout(timer);
   }, [fetchPosts]);
 
-  const handleUpdateStatus = async (id: number, status: PostStatus) => {
-    try {
-      setActionLoading(true);
-      await postManagementService.updateStatus(id, status);
-      toast.success(`Đã ${status === 'APPROVED' ? 'duyệt' : 'từ chối'} bài viết`);
-      fetchPosts();
-    } catch (error: any) {
-      toast.error("Lỗi khi cập nhật trạng thái");
-    } finally {
-      setActionLoading(false);
-    }
+  const handleApprovalSuccess = () => {
+    setIsApprovalOpen(false);
+    fetchPosts();
   };
 
   const columns: ColumnDef<PostManagement>[] = [
@@ -144,36 +136,22 @@ export default function PostManagementPage() {
       header: () => <div className="text-right">Thao tác</div>,
       cell: ({ row }) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => { setSelectedItem(row.original); setIsDetailOpen(true); }}><Eye size={16} /></Button>
-          
-          {row.original.status === 'PENDING' && (
-              <>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-green-600 hover:bg-green-50" 
-                    onClick={() => handleUpdateStatus(row.original.id, 'APPROVED')}
-                    disabled={actionLoading}
-                >
-                    <CheckCircle size={16} />
-                </Button>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-orange-600 hover:bg-orange-50" 
-                    onClick={() => handleUpdateStatus(row.original.id, 'REJECTED')}
-                    disabled={actionLoading}
-                >
-                    <XCircle size={16} />
-                </Button>
-              </>
-          )}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-primary hover:bg-primary/5"
+            onClick={() => { setSelectedItem(row.original); setIsApprovalOpen(true); }}
+            title="Duyệt bài viết"
+          >
+            <Eye size={16} />
+          </Button>
 
           <Button 
             variant="ghost" 
             size="icon" 
             className="text-red-500 hover:bg-red-50" 
             onClick={() => { setSelectedItem(row.original); setIsDeleteOpen(true); }}
+            title="Xóa vĩnh viễn"
           >
             <Trash2 size={16} />
           </Button>
@@ -274,23 +252,13 @@ export default function PostManagementPage() {
         isLoading={loading} 
       />
 
-      <DetailModal 
-        isOpen={isDetailOpen} 
-        onClose={() => setIsDetailOpen(false)} 
-        title="Nội dung bài viết" 
-        data={selectedItem} 
-        fields={[
-            { label: "Tiêu đề", key: "title" },
-            { label: "Người đăng", key: "username" },
-            { label: "Trạng thái", key: "status" },
-            { label: "Ngày đăng", key: "createdAt", render: (val: string) => new Date(val).toLocaleString('vi-VN') },
-            { label: "Nội dung", key: "content", render: (val) => <div className="text-sm p-4 bg-gray-50 rounded-lg border leading-relaxed whitespace-pre-wrap">{val}</div> },
-            { label: "Hình ảnh", key: "images", render: (val: any[]) => (
-                <div className="grid grid-cols-3 gap-2">
-                    {val?.map(img => <img key={img.id} src={img.imageUrl} className="w-full aspect-video object-cover rounded border" />)}
-                </div>
-            )}
-        ]} 
+      {/* Post Approval & Detail Modal */}
+      <PostApprovalModal 
+        key={selectedItem?.id || 'none'}
+        post={selectedItem}
+        isOpen={isApprovalOpen}
+        onClose={() => setIsApprovalOpen(false)}
+        onSuccess={handleApprovalSuccess}
       />
 
       <DeleteConfirmDialog 

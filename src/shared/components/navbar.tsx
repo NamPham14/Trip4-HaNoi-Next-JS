@@ -51,12 +51,25 @@ export const Navbar = () => {
     { id: 3, title: "Thời tiết Hà Nội", desc: "Dự báo có nắng đẹp, rất thích hợp để dạo quanh Hồ Tây.", time: "1 ngày trước", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&h=100&fit=crop" },
   ];
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
   return (
     <nav className={cn(
       "sticky top-0 z-[100] w-full transition-all duration-500",
-      isScrolled 
-        ? "bg-hanoi-cream/80 backdrop-blur-xl border-b border-hanoi-gold/30 shadow-sm py-2" 
-        : "bg-transparent py-4"
+      isMenuOpen 
+        ? "bg-hanoi-cream opacity-100 shadow-none" 
+        : (isScrolled 
+            ? "bg-hanoi-cream/80 backdrop-blur-xl border-b border-hanoi-gold/30 shadow-sm py-2" 
+            : "bg-transparent py-4")
     )}>
       <div className="container mx-auto px-4 flex items-center justify-between relative z-[110]">
         {/* Left: Logo */}
@@ -96,53 +109,55 @@ export const Navbar = () => {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           <WeatherWidget />
 
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative text-zinc-600 hover:bg-hanoi-gold/30 rounded-full h-10 w-10 transition-colors">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-2 right-2 h-2 w-2 bg-hanoi-red rounded-full border-2 border-hanoi-cream" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 mt-2 rounded-3xl p-2 shadow-2xl border-hanoi-gold/20 bg-hanoi-cream/95 backdrop-blur-xl">
-              <DropdownMenuLabel className="px-4 py-3 flex items-center justify-between">
-                <span className="text-sm font-black text-hanoi-red uppercase">Thông báo mới</span>
-                <span className="text-[10px] font-bold bg-hanoi-red text-white px-2 py-0.5 rounded-full">3 tin mới</span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-              <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                {notifications.map((n) => (
-                  <DropdownMenuItem key={n.id} className="rounded-2xl p-3 mb-1 cursor-pointer focus:bg-hanoi-gold/40 flex gap-3 transition-colors">
-                    <img src={n.image} alt="" className="h-12 w-12 rounded-xl object-cover shadow-sm" />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-bold text-zinc-900 leading-tight">{n.title}</span>
-                      <p className="text-xs text-zinc-500 line-clamp-2 leading-tight">{n.desc}</p>
-                      <span className="text-[10px] font-medium text-hanoi-red/60 mt-1">{n.time}</span>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </div>
-              <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-              <Button variant="ghost" className="w-full text-xs font-bold text-hanoi-red hover:bg-hanoi-gold/40 rounded-xl py-2 transition-colors">
-                Xem tất cả thông báo
-              </Button>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Notifications - Hidden on very small mobile, moved to menu */}
+          <div className="hidden xs:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative text-zinc-600 hover:bg-hanoi-gold/30 rounded-full h-10 w-10 transition-colors">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-2 right-2 h-2 w-2 bg-hanoi-red rounded-full border-2 border-hanoi-cream" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 mt-2 rounded-3xl p-2 shadow-2xl border-hanoi-gold/20 bg-hanoi-cream/95 backdrop-blur-xl">
+                <DropdownMenuLabel className="px-4 py-3 flex items-center justify-between">
+                  <span className="text-sm font-black text-hanoi-red uppercase">Thông báo mới</span>
+                  <span className="text-[10px] font-bold bg-hanoi-red text-white px-2 py-0.5 rounded-full">3 tin mới</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
+                <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                  {notifications.map((n) => (
+                    <DropdownMenuItem key={n.id} className="rounded-2xl p-3 mb-1 cursor-pointer focus:bg-hanoi-gold/40 flex gap-3 transition-colors">
+                      <img src={n.image} alt="" className="h-12 w-12 rounded-xl object-cover shadow-sm" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-bold text-zinc-900 leading-tight">{n.title}</span>
+                        <p className="text-xs text-zinc-500 line-clamp-2 leading-tight">{n.desc}</p>
+                        <span className="text-[10px] font-medium text-hanoi-red/60 mt-1">{n.time}</span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
+                <Button variant="ghost" className="w-full text-xs font-bold text-hanoi-red hover:bg-hanoi-gold/40 rounded-xl py-2 transition-colors">
+                  Xem tất cả thông báo
+                </Button>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 pr-3 bg-white/60 hover:bg-hanoi-gold/40 rounded-full border border-hanoi-gold/30 transition-all outline-none group shadow-sm">
+                <button className="flex items-center gap-2 p-1 xs:pr-3 bg-white/60 hover:bg-hanoi-gold/40 rounded-full border border-hanoi-gold/30 transition-all outline-none group shadow-sm">
                   <Avatar className="h-8 w-8 border-2 border-hanoi-red/20 group-hover:border-hanoi-red/40 transition-colors">
                     <AvatarImage src={user?.avatar} />
                     <AvatarFallback className="bg-hanoi-red text-white font-black text-[10px]">
                       {user?.username?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col items-start leading-none ml-1">
+                  <div className="hidden xs:flex flex-col items-start leading-none ml-1">
                     <span className="text-xs font-black text-zinc-900 group-hover:text-hanoi-red transition-colors">
                       {user?.username}
                     </span>
@@ -187,13 +202,13 @@ export const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden xs:flex items-center gap-1 sm:gap-2">
               <Link href="/login">
-                <Button variant="ghost" className="text-hanoi-red font-black text-sm hover:bg-hanoi-gold/30 rounded-2xl px-5 transition-all">Đăng nhập</Button>
+                <Button variant="ghost" className="text-hanoi-red font-black text-xs sm:text-sm hover:bg-hanoi-gold/30 rounded-2xl px-3 sm:px-5 transition-all h-9">Đăng nhập</Button>
               </Link>
-              <Link href="/register">
+              <Link href="/register" className="hidden sm:block">
                 <Button className="bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-2xl px-6 text-sm shadow-xl shadow-hanoi-red/20 transition-all active:scale-95 border-2 border-transparent">
-                  Bắt đầu ngay
+                  Bắt đầu
                 </Button>
               </Link>
             </div>
@@ -203,7 +218,7 @@ export const Navbar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="md:hidden text-zinc-600 hover:bg-hanoi-gold/30 rounded-xl transition-colors"
+            className="md:hidden text-zinc-600 hover:bg-hanoi-gold/30 rounded-xl transition-colors h-10 w-10"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -216,37 +231,44 @@ export const Navbar = () => {
         "fixed inset-0 top-0 bg-hanoi-cream z-[90] transition-all duration-500 md:hidden flex flex-col pt-20",
         isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
       )}>
-        <div className="flex-1 overflow-y-auto px-6 space-y-2">
-          {[
-            { name: "Khám phá địa điểm", href: "/explore", icon: Compass },
-            { name: "Lịch trình AI", href: "/planner", icon: Sparkles },
-            { name: "Cộng đồng Trip4Hanoi", href: "/posts", icon: MessageSquare },
-            { name: "Lịch trình cá nhân", href: "/my-itineraries", icon: Bookmark, auth: true },
-            { name: "Sự kiện đặc sắc", href: "/events", icon: MapPin },
-          ].map((item) => (
-            (!item.auth || isAuthenticated) && (
-              <Link 
-                key={item.href}
-                href={item.href} 
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-between p-5 rounded-3xl bg-white/50 border border-hanoi-gold/20 text-xl font-black text-zinc-900 active:scale-95 transition-all"
-              >
-                {item.name}
-                <item.icon className="h-6 w-6 text-hanoi-red" />
-              </Link>
-            )
-          ))}
+        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+          {/* Weather on Mobile Menu */}
+          <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700 delay-150">
+            <WeatherWidget variant="full" />
+          </div>
 
-          {!isAuthenticated && (
-            <div className="grid grid-cols-2 gap-3 mt-8">
-              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="outline" className="w-full h-16 font-black border-hanoi-gold/50 text-hanoi-red rounded-3xl bg-transparent">Đăng nhập</Button>
-              </Link>
-              <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full h-16 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-3xl">Tham gia</Button>
-              </Link>
-            </div>
-          )}
+          <div className="space-y-2">
+            {[
+              { name: "Khám phá địa điểm", href: "/explore", icon: Compass },
+              { name: "Lịch trình AI", href: "/planner", icon: Sparkles },
+              { name: "Cộng đồng Trip4Hanoi", href: "/posts", icon: MessageSquare },
+              { name: "Lịch trình cá nhân", href: "/my-itineraries", icon: Bookmark, auth: true },
+              { name: "Sự kiện đặc sắc", href: "/events", icon: MapPin },
+            ].map((item) => (
+              (!item.auth || isAuthenticated) && (
+                <Link 
+                  key={item.href}
+                  href={item.href} 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between p-5 rounded-3xl bg-white/50 border border-hanoi-gold/20 text-xl font-black text-zinc-900 active:scale-95 transition-all"
+                >
+                  {item.name}
+                  <item.icon className="h-6 w-6 text-hanoi-red" />
+                </Link>
+              )
+            ))}
+
+            {!isAuthenticated && (
+              <div className="grid grid-cols-2 gap-3 mt-8">
+                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" className="w-full h-16 font-black border-hanoi-gold/50 text-hanoi-red rounded-3xl bg-transparent">Đăng nhập</Button>
+                </Link>
+                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full h-16 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-3xl">Tham gia</Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="p-10 text-center opacity-5 pointer-events-none mt-auto">

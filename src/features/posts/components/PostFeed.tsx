@@ -64,7 +64,7 @@ export const PostFeed: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 space-y-6">
+    <div className="max-w-2xl mx-auto px-0 sm:px-4 space-y-3 sm:space-y-6">
       {Array.isArray(posts) &&
         posts.map((post) => (
           <PostCard 
@@ -98,7 +98,7 @@ export const PostFeed: React.FC = () => {
       )}
       
       {!loading && posts?.length === 0 && (
-        <div className="text-center py-20 text-gray-500">
+        <div className="text-center py-20 text-gray-500 px-4">
           Chưa có bài viết nào. Hãy là người đầu tiên chia sẻ!
         </div>
       )}
