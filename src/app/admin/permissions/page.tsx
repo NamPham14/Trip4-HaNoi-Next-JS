@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShieldCheck, Plus, Edit2, Trash2, Loader2, Search, Eye } from 'lucide-react';
+import { ShieldCheck, Plus, Edit2, Trash2, Search, Eye } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { DataTable } from '@/shared/components/ui/table-data';
@@ -13,17 +13,7 @@ import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialo
 import { CrudModal } from '@/shared/components/ui/crud-modal';
 import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
-import { Label } from '@/shared/components/ui/label';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-const permissionSchema = z.object({
-  name: z.string().min(3, "Tên quyền ít nhất 3 ký tự").regex(/^[A-Z_]+$/, "Quyền phải viết hoa và dùng dấu gạch dưới (VD: MANAGE_USER)"),
-  description: z.string().min(5, "Mô tả ít nhất 5 ký tự"),
-});
-
-type PermissionFormData = z.infer<typeof permissionSchema>;
+import { PermissionForm, PermissionFormData } from '@/features/security/components/PermissionForm';
 
 export default function PermissionManagementPage() {
   const [data, setData] = useState<Permission[]>([]);
@@ -38,10 +28,6 @@ export default function PermissionManagementPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Permission | null>(null);
   const [formLoading, setFormLoading] = useState(false);
-
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<PermissionFormData>({
-    resolver: zodResolver(permissionSchema),
-  });
 
   const fetchPermissions = useCallback(async () => {
     try {
@@ -87,11 +73,6 @@ export default function PermissionManagementPage() {
 
   const openForm = (item?: Permission) => {
     setSelectedItem(item || null);
-    if (item) {
-      reset({ name: item.name, description: item.description });
-    } else {
-      reset({ name: "", description: "" });
-    }
     setIsFormOpen(true);
   };
 
@@ -134,34 +115,34 @@ export default function PermissionManagementPage() {
       <DetailModal isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} title="Chi tiết quyền" data={selectedItem} fields={[{ label: "Tên quyền", key: "name" }, { label: "Mô tả", key: "description" }]} />
 
       <CrudModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={selectedItem ? "Cập nhật quyền" : "Tạo quyền mới"}>
-        <form onSubmit={handleSubmit(onSave)} className="space-y-4">
-          <div className="space-y-2">
-            <Label className="font-bold">Mã quyền (vd: MANAGE_USER) <span className="text-red-500">*</span></Label>
-            <Input {...register("name")} placeholder="MANAGE_..." disabled={formLoading} />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label className="font-bold">Mô tả chi tiết <span className="text-red-500">*</span></Label>
-            <Input {...register("description")} placeholder="Mô tả cho quyền này..." disabled={formLoading} />
-            {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
-          </div>
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>Hủy</Button>
-            <Button type="submit" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Lưu lại</Button>
-          </div>
-        </form>
+        <PermissionForm 
+          selectedPermission={selectedItem} 
+          formLoading={formLoading} 
+          onSubmit={onSave} 
+          onCancel={() => setIsFormOpen(false)} 
+        />
       </CrudModal>
 
-      <DeleteConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} title="Xóa quyền này?" description="Xóa quyền có thể ảnh hưởng đến các vai trò đang sử dụng quyền này." onConfirm={async () => {
-         try {
-           setFormLoading(true);
-           await securityService.deletePermission(selectedItem!.id);
-           toast.success("Xóa thành công");
-           setIsDeleteOpen(false);
-           fetchPermissions();
-         } catch (e: any) { toast.error("Lỗi khi xóa"); }
-         finally { setFormLoading(false); }
-      }} isLoading={formLoading} />
+      <DeleteConfirmDialog 
+        isOpen={isDeleteOpen} 
+        onClose={() => setIsDeleteOpen(false)} 
+        title="Xóa quyền này?" 
+        description="Xóa quyền có thể ảnh hưởng đến các vai trò đang sử dụng quyền này." 
+        onConfirm={async () => {
+          try {
+            setFormLoading(true);
+            await securityService.deletePermission(selectedItem!.id);
+            toast.success("Xóa thành công");
+            setIsDeleteOpen(false);
+            fetchPermissions();
+          } catch (e: any) { 
+            toast.error("Lỗi khi xóa"); 
+          } finally { 
+            setFormLoading(false); 
+          }
+        }} 
+        isLoading={formLoading} 
+      />
     </div>
   );
 }

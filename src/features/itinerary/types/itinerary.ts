@@ -21,6 +21,8 @@ export interface DayItinerary {
 
 export interface Itinerary {
   id: number;
+  userId?: number;
+  userName?: string;
   title: string;
   budget: number;
   days: number;

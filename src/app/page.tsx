@@ -13,6 +13,9 @@ import { EventCard } from "@/features/events/components/event-card";
 import { Event } from "@/features/events/types/event";
 import Link from "next/link";
 import { useUser } from "@/features/auth/hooks/use-auth";
+import { useFeaturedItineraries } from "@/features/itinerary/hooks/use-featured-itineraries";
+import { ItineraryCard } from "@/features/itinerary/components/ItineraryCard";
+import { Itinerary } from "@/features/itinerary/types/itinerary";
 
 export default function HomePage() {
   const { isAuthenticated } = useUser();
@@ -146,49 +149,8 @@ export default function HomePage() {
       {/* Events Section */}
       <FeaturedEventsSection />
 
-      {/* Itinerary Template Section (Placeholder style) */}
-      <section className="py-24 px-4 bg-zinc-900 text-white overflow-hidden relative">
-        <div className="container mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 italic">
-              Lịch trình <span className="text-hanoi-gold">đã được chọn lọc</span>
-            </h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
-              Từ tour ẩm thực phố cổ đến hành trình văn hóa tâm linh, chúng tôi đã chuẩn bị sẵn những trải nghiệm tuyệt vời nhất cho bạn.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: "Hà Nội - Một ngày bình yên", time: "12 giờ", budget: "500k - 1tr", img: "https://images.unsplash.com/photo-1555921015-5532091f6026?q=80&w=800" },
-              { title: "Thiên đường ẩm thực Phố Cổ", time: "6 giờ", budget: "300k - 500k", img: "https://images.unsplash.com/photo-1562307534-a03738d2a81a?q=80&w=800" },
-              { title: "Hà Nội về đêm rực rỡ", time: "5 giờ", budget: "400k - 800k", img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800" },
-            ].map((item, idx) => (
-              <div key={idx} className="group relative aspect-[4/5] rounded-[40px] overflow-hidden cursor-pointer">
-                <img src={item.img} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                <div className="absolute bottom-0 p-8 w-full">
-                  <div className="flex gap-2 mb-3">
-                    <span className="bg-hanoi-gold/20 backdrop-blur-md border border-hanoi-gold/30 text-hanoi-gold text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                      {item.time}
-                    </span>
-                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                      {item.budget}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-black mb-4 leading-tight group-hover:text-hanoi-gold transition-colors">{item.title}</h3>
-                  <Button className="w-full bg-white text-zinc-900 font-black rounded-2xl opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    Xem chi tiết
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Traditional Patterns Background */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#F5E6CA 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
-      </section>
+      {/* Admin Curated Itineraries Section */}
+      <FeaturedItinerariesSection />
 
       {/* Community / Testimonials */}
       <section className="py-24 px-4 bg-hanoi-cream overflow-hidden">
@@ -292,6 +254,47 @@ function FeaturedEventsSection() {
       <div className="absolute bottom-[-5%] right-[-5%] p-20 opacity-[0.02] pointer-events-none select-none">
         <span className="text-[25vw] font-black italic tracking-tighter text-hanoi-red leading-none">HANOI</span>
       </div>
+    </section>
+  );
+}
+
+function FeaturedItinerariesSection() {
+  const { data: itineraries, isLoading } = useFeaturedItineraries();
+
+  if (!isLoading && (!itineraries || itineraries.length === 0)) return null;
+
+  return (
+    <section className="py-24 px-4 bg-zinc-900 text-white overflow-hidden relative">
+      <div className="container mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hanoi-gold/20 text-hanoi-gold text-[10px] font-black uppercase tracking-widest mb-4">
+            <Sparkles className="h-3 w-3 fill-current" /> Đề xuất bởi Chuyên gia
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 italic">
+            Hành trình <span className="text-hanoi-gold">đã được chọn lọc</span>
+          </h2>
+          <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
+            Từ tour ẩm thực phố cổ đến hành trình văn hóa tâm linh, chúng tôi đã chuẩn bị sẵn những trải nghiệm tuyệt vời nhất cho bạn.
+          </p>
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white/5 rounded-[40px] aspect-[4/5] animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {itineraries?.map((itinerary: Itinerary) => (
+              <ItineraryCard key={itinerary.id} itinerary={itinerary} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Traditional Patterns Background */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#F5E6CA 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
     </section>
   );
 }

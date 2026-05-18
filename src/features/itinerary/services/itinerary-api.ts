@@ -1,9 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/shared/api/axios-instance";
-import { ApiResponse } from "@/shared/types/api";
+import { ApiResponse, PageResponse } from "@/shared/types/api";
 import { Itinerary, CreateItineraryRequest, UpdateFullItineraryRequest } from "../types/itinerary";
 
 export const itineraryService = {
+  /**
+   * ADMIN: Get all itineraries with pagination
+   */
+  getAllItinerariesAdmin: async (params: { page?: number; size?: number; keyword?: string }): Promise<PageResponse<Itinerary>> => {
+    const response = await axiosInstance.get<ApiResponse<PageResponse<Itinerary>>>('/itineraries/admin', {
+      params: {
+        ...params,
+        page: params.page || 1,
+        size: params.size || 10
+      }
+    });
+    return response.data.data;
+  },
+
+  getFeaturedItineraries: async (): Promise<Itinerary[]> => {
+    const response = await axiosInstance.get<ApiResponse<Itinerary[]>>('/itineraries/featured');
+    return response.data.data;
+  },
+
   getMyItineraries: async (): Promise<Itinerary[]> => {
     const response = await axiosInstance.get<ApiResponse<Itinerary[]>>('/itineraries/my');
     return response.data.data;

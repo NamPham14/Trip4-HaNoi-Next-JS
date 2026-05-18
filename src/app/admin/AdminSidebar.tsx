@@ -9,17 +9,20 @@ import {
   ShieldCheck, 
   Settings,
   Tags,
-  MessageSquare
+  MessageSquare,
+  Star
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['ADMIN', 'STAFF'] },
   { icon: MapPin, label: 'Địa điểm', href: '/admin/places', roles: ['ADMIN', 'STAFF'] },
+  { icon: Calendar, label: 'Lịch trình', href: '/admin/itineraries', roles: ['ADMIN', 'STAFF'] },
   { icon: Calendar, label: 'Sự kiện', href: '/admin/events', roles: ['ADMIN', 'STAFF'] },
   { icon: Tags, label: 'Danh mục', href: '/admin/categories', roles: ['ADMIN', 'STAFF'] },
-  { icon: MessageSquare, label: 'Bài viết & Review', href: '/admin/posts', roles: ['ADMIN', 'STAFF'] },
-  { icon: MessageSquare, label: 'Quản lý Bình luận', href: '/admin/comments', roles: ['ADMIN', 'STAFF'] },
+  { icon: MessageSquare, label: 'Bài viết', href: '/admin/posts', roles: ['ADMIN', 'STAFF'] },
+  { icon: MessageSquare, label: 'Bình luận', href: '/admin/comments', roles: ['ADMIN', 'STAFF'] },
+  { icon: Star, label: 'Đánh giá (Review)', href: '/admin/reviews', roles: ['ADMIN', 'STAFF'] },
   { icon: Users, label: 'Người dùng', href: '/admin/users', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Vai trò', href: '/admin/roles', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Quyền', href: '/admin/permissions', roles: ['ADMIN'] },

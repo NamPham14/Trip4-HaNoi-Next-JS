@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Tags, Plus, Search, Edit2, Trash2, Loader2, Eye } from 'lucide-react';
+import { Tags, Plus, Search, Edit2, Trash2, Eye } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { DataTable } from '@/shared/components/ui/table-data';
@@ -12,20 +12,9 @@ import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialo
 import { CrudModal } from '@/shared/components/ui/crud-modal';
 import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
-import { Label } from '@/shared/components/ui/label';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-//  Define Validation Schema
-const categorySchema = z.object({
-  name: z.string().min(2, "Tên danh mục phải có ít nhất 2 ký tự").max(50, "Tên danh mục quá dài"),
-});
-
-type CategoryFormData = z.infer<typeof categorySchema>;
+import { CategoryForm, CategoryFormData } from '@/features/category/components/CategoryForm';
 
 export default function CategoryManagementPage() {
-  // Data State
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,17 +23,11 @@ export default function CategoryManagementPage() {
   const [totalElements, setTotalElements] = useState(0);
   const pageSize = 10;
 
-  // Modal State
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [formLoading, setFormLoading] = useState(false);
-
-  //  Setup Form with Validation
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoryFormData>({
-    resolver: zodResolver(categorySchema),
-  });
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -90,11 +73,6 @@ export default function CategoryManagementPage() {
 
   const openForm = (category?: Category) => {
     setSelectedCategory(category || null);
-    if (category) {
-      setValue("name", category.name);
-    } else {
-      reset({ name: "" });
-    }
     setIsFormOpen(true);
   };
 
@@ -140,7 +118,6 @@ export default function CategoryManagementPage() {
 
       <DataTable columns={columns} data={categories} pageCount={pageCount} pageIndex={pageIndex} onPageChange={setPageIndex} isLoading={loading} />
 
-      {/* Detail View Modal */}
       <DetailModal 
         isOpen={isDetailOpen} 
         onClose={() => setIsDetailOpen(false)} 
@@ -152,35 +129,33 @@ export default function CategoryManagementPage() {
         ]}
       />
 
-      {/* Add/Edit Modal with Validation */}
       <CrudModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={selectedCategory ? "Cập nhật" : "Thêm mới"}>
-        <form onSubmit={handleSubmit(onSave)} className="space-y-4">
-          <div className="space-y-2">
-            <Label>Tên danh mục <span className="text-red-500">*</span></Label>
-            <Input {...register("name")} placeholder="Nhập tên..." disabled={formLoading} />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
-          </div>
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>Hủy</Button>
-            <Button type="submit" disabled={formLoading}>
-              {formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Lưu
-            </Button>
-          </div>
-        </form>
+        <CategoryForm 
+          selectedCategory={selectedCategory} 
+          formLoading={formLoading} 
+          onSubmit={onSave} 
+          onCancel={() => setIsFormOpen(false)} 
+        />
       </CrudModal>
 
-      <DeleteConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={async () => {
-         try {
-           setFormLoading(true);
-           await categoryService.deleteCategory(selectedCategory!.id);
-           toast.success("Xóa thành công");
-           setIsDeleteOpen(false);
-           fetchCategories();
-         } catch (e: any) {
-           toast.error(e.response?.data?.message || "Lỗi khi xóa");
-         } finally { setFormLoading(false); }
-      }} isLoading={formLoading} />
+      <DeleteConfirmDialog 
+        isOpen={isDeleteOpen} 
+        onClose={() => setIsDeleteOpen(false)} 
+        onConfirm={async () => {
+          try {
+            setFormLoading(true);
+            await categoryService.deleteCategory(selectedCategory!.id);
+            toast.success("Xóa thành công");
+            setIsDeleteOpen(false);
+            fetchCategories();
+          } catch (e: any) {
+            toast.error(e.response?.data?.message || "Lỗi khi xóa");
+          } finally { 
+            setFormLoading(false); 
+          }
+        }} 
+        isLoading={formLoading} 
+      />
     </div>
   );
 }
