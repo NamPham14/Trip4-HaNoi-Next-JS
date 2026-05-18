@@ -156,7 +156,7 @@ export default function PlaceManagementPage() {
             <div className="w-full md:w-[220px]">
                 <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-gray-500">Danh mục</Label>
                 <Select value={selectedCategory} onValueChange={(val) => { setSelectedCategory(val); setPageIndex(0); }}>
-                    <SelectTrigger className="h-11 border-2 border-gray-100 bg-gray-50/30 font-semibold text-gray-700 hover:bg-gray-100/50 transition-colors">
+                    <SelectTrigger className="h-11 border-2 border-gray-100 bg-white font-semibold text-gray-700 hover:bg-gray-100/50 transition-colors">
                         <div className="flex items-center gap-2">
                             <Filter size={14} className="text-primary" />
                             <SelectValue placeholder="Danh mục" />
@@ -172,7 +172,7 @@ export default function PlaceManagementPage() {
             <div className="w-full md:w-[200px]">
                 <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-gray-500">Khu vực</Label>
                 <Select value={selectedDistrict} onValueChange={(val) => { setSelectedDistrict(val); setPageIndex(0); }}>
-                    <SelectTrigger className="h-11 border-2 border-gray-100 bg-gray-50/30 font-semibold text-gray-700 hover:bg-gray-100/50 transition-colors">
+                    <SelectTrigger className="h-11 border-2 border-gray-100 bg-white font-semibold text-gray-700 hover:bg-gray-100/50 transition-colors">
                          <div className="flex items-center gap-2">
                             <MapPin size={14} className="text-primary" />
                             <SelectValue placeholder="Quận/Huyện" />
