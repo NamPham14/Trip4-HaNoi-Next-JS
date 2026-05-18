@@ -19,6 +19,7 @@ const menuItems = [
   { icon: Calendar, label: 'Sự kiện', href: '/admin/events', roles: ['ADMIN', 'STAFF'] },
   { icon: Tags, label: 'Danh mục', href: '/admin/categories', roles: ['ADMIN', 'STAFF'] },
   { icon: MessageSquare, label: 'Bài viết & Review', href: '/admin/posts', roles: ['ADMIN', 'STAFF'] },
+  { icon: MessageSquare, label: 'Quản lý Bình luận', href: '/admin/comments', roles: ['ADMIN', 'STAFF'] },
   { icon: Users, label: 'Người dùng', href: '/admin/users', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Vai trò', href: '/admin/roles', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Quyền', href: '/admin/permissions', roles: ['ADMIN'] },

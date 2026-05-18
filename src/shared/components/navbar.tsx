@@ -14,7 +14,8 @@ import {
   Bell,
   Calendar,
   Compass,
-  History
+  History,
+  MessageSquare
 } from "lucide-react";
 import { useUser, useLogout } from "@/features/auth/hooks/use-auth";
 import { Button } from "@/shared/components/ui/button";
@@ -77,6 +78,7 @@ export const Navbar = () => {
           {[
             { name: "Khám phá", href: "/explore", icon: Compass },
             { name: "Lịch trình", href: "/planner", icon: Calendar },
+            { name: "Cộng đồng", href: "/posts", icon: MessageSquare },
             { name: "Cá nhân", href: "/my-itineraries", icon: History, auth: true },
             { name: "Sự kiện", href: "/events", icon: Sparkles },
           ].map((item) => (
@@ -218,6 +220,7 @@ export const Navbar = () => {
           {[
             { name: "Khám phá địa điểm", href: "/explore", icon: Compass },
             { name: "Lịch trình AI", href: "/planner", icon: Sparkles },
+            { name: "Cộng đồng Trip4Hanoi", href: "/posts", icon: MessageSquare },
             { name: "Lịch trình cá nhân", href: "/my-itineraries", icon: Bookmark, auth: true },
             { name: "Sự kiện đặc sắc", href: "/events", icon: MapPin },
           ].map((item) => (
