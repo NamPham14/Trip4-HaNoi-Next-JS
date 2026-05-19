@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { MessageSquare, X, Send, Sparkles, MapPin, Clock, Info, Bookmark, Loader2, Headset, Bot, User } from "lucide-react";
 import { useChat } from "../hooks/use-chat";
 import { useLiveChat } from "../hooks/use-live-chat";
@@ -12,12 +13,16 @@ import { ChatAIResponse, ChatMode, Message, ScheduleItem } from "../types/chat";
 import { Badge } from "@/shared/components/ui/badge";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useChatStore } from "@/shared/store/chat-store";
 
 export const ChatWidget = () => {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
-  const [chatMode, setChatMode] = useState<ChatMode>("AI");
+  const { isOpen, chatMode, setChatMode, closeChat, toggleChat } = useChatStore();
   const [inputText, setInputText] = useState("");
+
+  useEffect(() => {
+    console.log(">>>>>>>ChatWidget State Change - isOpen:", isOpen, "mode:", chatMode);
+  }, [isOpen, chatMode]);
   
   const aiChat = useChat();
   const liveChat = useLiveChat();
@@ -106,7 +111,7 @@ export const ChatWidget = () => {
                 </button>
               </div>
               <button 
-                onClick={() => setIsOpen(false)}
+                onClick={closeChat}
                 className="p-1 hover:bg-white/10 rounded-full transition-colors"
               >
                 <X className="h-6 w-6" />
@@ -363,7 +368,7 @@ export const ChatWidget = () => {
 
       {/* Floating Button */}
       <button 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChat}
         className={cn(
           "w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110",
           isOpen 

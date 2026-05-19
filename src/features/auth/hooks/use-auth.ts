@@ -22,9 +22,10 @@ export const useLogin = () => {
       
       // Kiểm tra role để điều hướng
       const isAdmin = data.user.roles.some(role => role.name === 'ADMIN');
+      const isStaff = data.user.roles.some(role => role.name === 'STAFF');
       
-      if (isAdmin) {
-        toast.success("Chào mừng Admin quay trở lại!");
+      if (isAdmin || isStaff) {
+        toast.success(`Chào mừng ${isAdmin ? 'Admin' : 'Nhân viên'} quay trở lại!`);
         router.push('/admin');
       } else {
         toast.success("Đăng nhập thành công!");

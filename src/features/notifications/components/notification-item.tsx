@@ -6,6 +6,8 @@ import { Notification } from "../types/notification";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useChatStore } from "@/shared/store/chat-store";
+
 interface NotificationItemProps {
   notification: Notification;
   onMarkAsRead: (id: number) => void;
@@ -33,6 +35,7 @@ export const NotificationItem = ({ notification: n, onMarkAsRead }: Notification
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
+  const openChat = useChatStore((state) => state.openChat);
 
   const handleAction = () => {
     // Đánh dấu đã đọc trước
@@ -40,11 +43,23 @@ export const NotificationItem = ({ notification: n, onMarkAsRead }: Notification
       onMarkAsRead(n.id);
     }
     
+    // Kiểm tra xem đây có phải là thông báo Chat không (ngay cả khi targetUrl bị null)
+    const isChatNotification = n.targetUrl?.includes('#chat') || 
+                               n.message.toLowerCase().includes('đã trả lời tin nhắn');
+
+    if (isChatNotification) {
+      setTimeout(() => {
+        openChat("LIVE");
+      }, 100);
+      
+      if (pathname === '/' && !n.targetUrl) return;
+    }
+    
     // Nếu có targetUrl thì chuyển trang
     if (n.targetUrl) {
-      // Nếu đang ở chính trang đó rồi, router.push sẽ không load lại data
-      // Cần chủ động invalidate để React Query fetch lại bản mới nhất
-      if (n.targetUrl === pathname) {
+      // Nếu đang ở chính trang đó rồi (không tính hash), router.push sẽ không load lại data
+      const cleanTarget = n.targetUrl.split('#')[0];
+      if (cleanTarget === pathname) {
         queryClient.invalidateQueries();
       }
       router.push(n.targetUrl);

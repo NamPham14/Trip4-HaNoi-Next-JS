@@ -14,6 +14,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/shared/store/auth-store';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['ADMIN', 'STAFF'] },
@@ -33,6 +34,12 @@ const menuItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+  const userRoles = user?.roles.map(r => r.name) || [];
+
+  const filteredMenuItems = menuItems.filter(item => 
+    item.roles.some(role => userRoles.includes(role))
+  );
 
   return (
     <div className="w-64 bg-white border-r h-screen flex flex-col sticky top-0">
@@ -40,7 +47,7 @@ export function AdminSidebar() {
         <h2 className="text-xl font-bold text-primary">Trip4Hanoi Admin</h2>
       </div>
       <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
