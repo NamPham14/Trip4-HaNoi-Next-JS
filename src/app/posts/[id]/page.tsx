@@ -6,10 +6,11 @@ import { useQuery } from '@tanstack/react-query'
 import { postService } from '@/features/posts/services/post-api'
 import { Navbar } from "@/shared/components/navbar"
 import Footer from "@/shared/components/Footer"
-import { PostCard } from '@/features/posts/components/PostCard'
+
 import { Button } from '@/shared/components/ui/button'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { PostCard } from '@/features/posts/components/PostCard'
 
 export default function PostDetailPage() {
   const params = useParams()
