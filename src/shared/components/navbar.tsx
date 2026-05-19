@@ -31,6 +31,8 @@ import {
 import { WeatherWidget } from "./WeatherWidget";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 
+import { NotificationDropdown } from "@/features/notifications/components/notification-dropdown";
+
 export const Navbar = () => {
   const { user, isAuthenticated } = useUser();
   const logout = useLogout();
@@ -44,12 +46,6 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const notifications = [
-    { id: 1, title: "Lễ hội Chùa Hương", desc: "Sắp diễn ra vào cuối tuần này tại Mỹ Đức.", time: "2 giờ trước", image: "https://images.unsplash.com/photo-1555921015-5532091f6026?w=100&h=100&fit=crop" },
-    { id: 2, title: "Gợi ý mới", desc: "Một quán cà phê muối vừa được thêm vào danh sách yêu thích của bạn.", time: "5 giờ trước", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop" },
-    { id: 3, title: "Thời tiết Hà Nội", desc: "Dự báo có nắng đẹp, rất thích hợp để dạo quanh Hồ Tây.", time: "1 ngày trước", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&h=100&fit=crop" },
-  ];
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -112,95 +108,65 @@ export const Navbar = () => {
         <div className="flex items-center gap-1 sm:gap-3">
           <WeatherWidget />
 
-          {/* Notifications - Hidden on very small mobile, moved to menu */}
-          <div className="hidden xs:block">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative text-zinc-600 hover:bg-hanoi-gold/30 rounded-full h-10 w-10 transition-colors">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-2 right-2 h-2 w-2 bg-hanoi-red rounded-full border-2 border-hanoi-cream" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 mt-2 rounded-3xl p-2 shadow-2xl border-hanoi-gold/20 bg-hanoi-cream/95 backdrop-blur-xl">
-                <DropdownMenuLabel className="px-4 py-3 flex items-center justify-between">
-                  <span className="text-sm font-black text-hanoi-red uppercase">Thông báo mới</span>
-                  <span className="text-[10px] font-bold bg-hanoi-red text-white px-2 py-0.5 rounded-full">3 tin mới</span>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-                <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                  {notifications.map((n) => (
-                    <DropdownMenuItem key={n.id} className="rounded-2xl p-3 mb-1 cursor-pointer focus:bg-hanoi-gold/40 flex gap-3 transition-colors">
-                      <img src={n.image} alt="" className="h-12 w-12 rounded-xl object-cover shadow-sm" />
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-bold text-zinc-900 leading-tight">{n.title}</span>
-                        <p className="text-xs text-zinc-500 line-clamp-2 leading-tight">{n.desc}</p>
-                        <span className="text-[10px] font-medium text-hanoi-red/60 mt-1">{n.time}</span>
-                      </div>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-                <Button variant="ghost" className="w-full text-xs font-bold text-hanoi-red hover:bg-hanoi-gold/40 rounded-xl py-2 transition-colors">
-                  Xem tất cả thông báo
-                </Button>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          
           {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 xs:pr-3 bg-white/60 hover:bg-hanoi-gold/40 rounded-full border border-hanoi-gold/30 transition-all outline-none group shadow-sm">
-                  <Avatar className="h-8 w-8 border-2 border-hanoi-red/20 group-hover:border-hanoi-red/40 transition-colors">
-                    <AvatarImage src={user?.avatar} />
-                    <AvatarFallback className="bg-hanoi-red text-white font-black text-[10px]">
-                      {user?.username?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="hidden xs:flex flex-col items-start leading-none ml-1">
-                    <span className="text-xs font-black text-zinc-900 group-hover:text-hanoi-red transition-colors">
-                      {user?.username}
-                    </span>
-                    <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">Thành viên</span>
-                  </div>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-2 rounded-3xl p-2 shadow-2xl border-hanoi-gold/20 bg-hanoi-cream/95 backdrop-blur-xl">
-                <DropdownMenuLabel className="px-4 py-3">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-hanoi-red/40 uppercase tracking-[0.2em]">Tài khoản</span>
-                    <span className="text-sm font-black text-zinc-900 truncate">{user?.username}</span>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-                <Link href="/profile">
-                  <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
-                    <UserIcon className="mr-3 h-4 w-4" />
-                    Trang cá nhân
+            <div className="flex items-center gap-1 sm:gap-2">
+              <NotificationDropdown />
+
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 p-1 xs:pr-3 bg-white/60 hover:bg-hanoi-gold/40 rounded-full border border-hanoi-gold/30 transition-all outline-none group shadow-sm">
+                    <Avatar className="h-8 w-8 border-2 border-hanoi-red/20 group-hover:border-hanoi-red/40 transition-colors">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-hanoi-red text-white font-black text-[10px]">
+                        {user?.username?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="hidden xs:flex flex-col items-start leading-none ml-1">
+                      <span className="text-xs font-black text-zinc-900 group-hover:text-hanoi-red transition-colors">
+                        {user?.username}
+                      </span>
+                      <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">Thành viên</span>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-3xl p-2 shadow-2xl border-hanoi-gold/20 bg-hanoi-cream/95 backdrop-blur-xl">
+                  <DropdownMenuLabel className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-hanoi-red/40 uppercase tracking-[0.2em]">Tài khoản</span>
+                      <span className="text-sm font-black text-zinc-900 truncate">{user?.username}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-hanoi-gold/20" />
+                  <Link href="/profile">
+                    <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
+                      <UserIcon className="mr-3 h-4 w-4" />
+                      Trang cá nhân
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/my-itineraries">
+                    <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
+                      <Bookmark className="mr-3 h-4 w-4" />
+                      Lịch trình của tôi
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/saved-places">
+                    <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
+                      <Heart className="mr-3 h-4 w-4" />
+                      Địa điểm đã lưu
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator className="bg-hanoi-gold/20" />
+                  <DropdownMenuItem 
+                    onClick={() => logout()}
+                    className="rounded-2xl px-4 py-3 font-bold text-hanoi-red hover:bg-hanoi-red/5 cursor-pointer focus:bg-hanoi-red/5 transition-colors"
+                  >
+                    <LogOut className="mr-3 h-4 w-4" />
+                    Đăng xuất
                   </DropdownMenuItem>
-                </Link>
-                <Link href="/my-itineraries">
-                  <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
-                    <Bookmark className="mr-3 h-4 w-4" />
-                    Lịch trình của tôi
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/saved-places">
-                  <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
-                    <Heart className="mr-3 h-4 w-4" />
-                    Địa điểm đã lưu
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator className="bg-hanoi-gold/20" />
-                <DropdownMenuItem 
-                  onClick={() => logout()}
-                  className="rounded-2xl px-4 py-3 font-bold text-hanoi-red hover:bg-hanoi-red/5 cursor-pointer focus:bg-hanoi-red/5 transition-colors"
-                >
-                  <LogOut className="mr-3 h-4 w-4" />
-                  Đăng xuất
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           ) : (
             <div className="hidden xs:flex items-center gap-1 sm:gap-2">
               <Link href="/login">

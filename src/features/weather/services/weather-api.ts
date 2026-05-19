@@ -1,28 +1,26 @@
-import axiosInstance from "@/shared/api/axios-instance";
-
+import axiosInstance from '@/shared/api/axios-instance'
 
 export interface WeatherResponse {
-  temp: number;
-  condition: string;
-  description: string;
-  iconCode: string;
+  temp: number
+  condition: string
+  description: string
+  iconCode: string
 }
-
 
 export const weatherService = {
   getCurrentWeather: async (): Promise<WeatherResponse> => {
     try {
-      const response = await axiosInstance.get('/weather');
-      return response.data;
+      const response = await axiosInstance.get('/weather')
+      return response.data
     } catch (error) {
-      console.error("Error fetching weather:", error);
+      console.error('Error fetching weather:', error)
       // Fallback data if API fails to prevent UI breaking
       return {
         temp: 25,
-        condition: "Clear",
-        description: "Có nắng",
-        iconCode: "01d"
-      };
+        condition: 'Clear',
+        description: 'Có nắng',
+        iconCode: '01d',
+      }
     }
-  }
-};
+  },
+}

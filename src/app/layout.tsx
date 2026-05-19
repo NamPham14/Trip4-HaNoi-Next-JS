@@ -3,6 +3,7 @@
 
 import QueryProvider from '@/shared/providers/query-provider'
 import { LocationProvider } from '@/shared/providers/location-provider'
+import { FcmTokenHandler } from '@/shared/providers/fcm-provider'
 import { ChatWidget } from '@/features/chat/components/chat-widget'
 import React from 'react'
 import { Be_Vietnam_Pro } from 'next/font/google'
@@ -21,6 +22,7 @@ export default function RootLayout({children} :{children :React.ReactNode}) {
       <body className="font-sans antialiased text-zinc-900">
         <QueryProvider>
           <LocationProvider>
+            <FcmTokenHandler />
             {children}
             <ChatWidget />
             <Toaster position="bottom-right" richColors />

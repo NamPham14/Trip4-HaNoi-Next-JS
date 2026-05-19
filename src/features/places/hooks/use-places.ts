@@ -29,7 +29,7 @@ export const usePlaceDetail = (id: string | number) => {
     queryKey: placeKeys.detail(id),
     queryFn: () => placeService.getPlaceById(id, lat || undefined, lng || undefined),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0, // Luôn kiểm tra dữ liệu mới khi vào trang
   });
 };
 
