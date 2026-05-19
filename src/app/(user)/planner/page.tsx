@@ -46,11 +46,14 @@ export default function PlannerPage() {
     status: "DRAFT"
   });
 
-  useEffect(() => {
+  // Pattern: Adjusting state during render - Avoid cascading renders for isAdmin mode
+  const [prevIsAdmin, setPrevIsAdmin] = useState<boolean | undefined>(isAdmin);
+  if (isAdmin !== prevIsAdmin) {
+    setPrevIsAdmin(isAdmin);
     if (isAdmin) {
       setFormData(prev => ({ ...prev, isSample: true }));
     }
-  }, [isAdmin]);
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {

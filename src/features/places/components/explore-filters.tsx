@@ -34,10 +34,12 @@ export const ExploreFilters = ({ filters, setFilters }: ExploreFiltersProps) => 
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
   const [localKeyword, setLocalKeyword] = React.useState(filters.keyword);
 
-  // Sync local keyword with external filters (e.g. on clear all)
-  React.useEffect(() => {
+ // Đồng bộ từ khóa cục bộ với các bộ lọc bên ngoài (ví dụ: khi xóa tất cả) - Mẫu: Điều chỉnh trạng thái trong quá trình hiển thị
+  const [prevKeyword, setPrevKeyword] = React.useState(filters.keyword);
+  if (filters.keyword !== prevKeyword) {
+    setPrevKeyword(filters.keyword);
     setLocalKeyword(filters.keyword);
-  }, [filters.keyword]);
+  }
 
   // Debounce logic
   React.useEffect(() => {

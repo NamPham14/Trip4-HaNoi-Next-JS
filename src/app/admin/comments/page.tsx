@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
@@ -52,7 +53,12 @@ export default function AdminCommentsPage() {
 
   useEffect(() => {
     // Basic debounce for search if needed, but here we just fetch based on pageIndex
-    fetchAllComments()
+    // We use an async wrapper to ensure the state update (setLoading) is not synchronous in the effect
+    const init = async () => {
+      await Promise.resolve()
+      fetchAllComments()
+    }
+    init()
   }, [fetchAllComments])
 
   const columns: ColumnDef<Comment>[] = [

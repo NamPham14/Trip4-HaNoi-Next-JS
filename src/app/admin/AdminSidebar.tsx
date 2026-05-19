@@ -22,6 +22,7 @@ const menuItems = [
   { icon: Calendar, label: 'Sự kiện', href: '/admin/events', roles: ['ADMIN', 'STAFF'] },
   { icon: Tags, label: 'Danh mục', href: '/admin/categories', roles: ['ADMIN', 'STAFF'] },
   { icon: MessageSquare, label: 'Bài viết', href: '/admin/posts', roles: ['ADMIN', 'STAFF'] },
+  { icon: MessageSquare, label: 'Hỗ trợ trực tuyến', href: '/admin/chat', roles: ['ADMIN', 'STAFF'] },
   { icon: MessageSquare, label: 'Bình luận', href: '/admin/comments', roles: ['ADMIN', 'STAFF'] },
   { icon: Star, label: 'Đánh giá (Review)', href: '/admin/reviews', roles: ['ADMIN', 'STAFF'] },
   { icon: AlertTriangle, label: 'Báo cáo vi phạm', href: '/admin/reports', roles: ['ADMIN', 'STAFF'] },

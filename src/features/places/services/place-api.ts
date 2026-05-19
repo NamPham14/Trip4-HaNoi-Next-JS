@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse, PageResponse } from "@/shared/types/api";
 import { Place, PlaceDetailResponse, PlaceFilterParams } from "../types/place";

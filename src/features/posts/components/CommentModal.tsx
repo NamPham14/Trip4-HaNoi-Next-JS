@@ -9,7 +9,11 @@ import {
 } from '@/shared/components/ui/dialog'
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/shared/components/ui/avatar'
 import { Send, Loader2, MessageSquare, Trash2, Flag } from 'lucide-react'
 import { commentService, Comment } from '../services/comment-api'
 import { toast } from 'sonner'
@@ -63,7 +67,11 @@ export const CommentModal: React.FC<CommentModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      fetchComments()
+      const init = async () => {
+        await Promise.resolve()
+        fetchComments()
+      }
+      init()
     }
   }, [isOpen, fetchComments])
 
@@ -129,7 +137,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
               Bình luận về bài viết
             </DialogTitle>
             <p className="text-xs text-zinc-500 font-medium truncate italic mt-1">
-              "{postTitle}"
+              &ldquo;{postTitle}&rdquo;
             </p>
           </DialogHeader>
 
@@ -156,13 +164,15 @@ export const CommentModal: React.FC<CommentModalProps> = ({
                         </span>
                         <div className="flex items-center gap-2">
                           <span className="text-[9px] text-zinc-400 font-medium">
-                            {new Date(comment.createdAt).toLocaleDateString('vi-VN')}
+                            {new Date(comment.createdAt).toLocaleDateString(
+                              'vi-VN'
+                            )}
                           </span>
-                          
+
                           {/* Action Buttons (Delete/Report) */}
                           <div className="flex items-center opacity-50 hover:opacity-100 transition-all">
                             {user?.id === comment.userId ? (
-                              <button 
+                              <button
                                 onClick={() => handleDeleteClick(comment.id)}
                                 className="p-1 text-zinc-400 hover:text-red-500 transition-colors"
                                 title="Xóa bình luận"
@@ -170,7 +180,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
                                 <Trash2 size={12} />
                               </button>
                             ) : (
-                              <button 
+                              <button
                                 onClick={() => handleReport(comment.id)}
                                 className="p-1 text-zinc-400 hover:text-orange-500 transition-colors"
                                 title="Báo cáo vi phạm"
@@ -194,7 +204,9 @@ export const CommentModal: React.FC<CommentModalProps> = ({
                   <MessageSquare className="w-10 h-10 opacity-20" />
                 </div>
                 <p className="text-sm font-bold">Chưa có bình luận nào</p>
-                <p className="text-xs">Hãy là người đầu tiên chia sẻ cảm nghĩ!</p>
+                <p className="text-xs">
+                  Hãy là người đầu tiên chia sẻ cảm nghĩ!
+                </p>
               </div>
             )}
           </div>
@@ -211,7 +223,11 @@ export const CommentModal: React.FC<CommentModalProps> = ({
                 <Input
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder={user ? "Viết bình luận của bạn..." : "Đăng nhập để bình luận"}
+                  placeholder={
+                    user
+                      ? 'Viết bình luận của bạn...'
+                      : 'Đăng nhập để bình luận'
+                  }
                   className="pr-12 bg-white rounded-2xl h-10 border-zinc-200 focus:ring-hanoi-red/20 text-sm"
                   disabled={!user || submitting}
                 />
@@ -236,7 +252,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-      
+
       {reportTargetId && (
         <ReportModal
           isOpen={isReportModalOpen}

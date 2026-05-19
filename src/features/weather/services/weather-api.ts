@@ -2,6 +2,7 @@ import axiosInstance from '@/shared/api/axios-instance'
 
 export interface WeatherResponse {
   temp: number
+  feelsLike: number
   condition: string
   description: string
   iconCode: string
@@ -17,6 +18,7 @@ export const weatherService = {
       // Fallback data if API fails to prevent UI breaking
       return {
         temp: 25,
+        feelsLike: 27,
         condition: 'Clear',
         description: 'Có nắng',
         iconCode: '01d',

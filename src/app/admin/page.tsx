@@ -24,7 +24,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/button'; // Note: Should use Card component but I'll use simplified div if Card is not available
+
 import { mockDashboardData } from '@/features/dashboard/services/dashboard-api';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];

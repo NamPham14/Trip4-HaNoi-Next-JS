@@ -5,6 +5,7 @@ import { userService, UserUpdateRequest } from "../services/user-api";
 import { useAuthStore } from "@/shared/store/auth-store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { socketService } from "@/features/chat/services/socket-service";
 
 /**
  * Hook for Login
@@ -60,6 +61,7 @@ export const useLogout = () => {
   const router = useRouter();
 
   return () => {
+    socketService.disconnect();
     logout();
     router.push('/login');
     router.refresh();

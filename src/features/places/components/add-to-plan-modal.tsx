@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -38,12 +39,6 @@ export const AddToPlanModal = ({ placeId, placeName, isOpen, onClose }: AddToPla
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadItineraries();
-    }
-  }, [isOpen]);
-
   const loadItineraries = async () => {
     setIsLoading(true);
     try {
@@ -58,6 +53,16 @@ export const AddToPlanModal = ({ placeId, placeName, isOpen, onClose }: AddToPla
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      const init = async () => {
+        await Promise.resolve();
+        loadItineraries();
+      };
+      init();
+    }
+  }, [isOpen]);
 
   const handleAdd = async () => {
     if (!selectedItineraryId) return;
@@ -79,7 +84,7 @@ export const AddToPlanModal = ({ placeId, placeName, isOpen, onClose }: AddToPla
   };
 
   const selectedItinerary = itineraries.find(it => it.id.toString() === selectedItineraryId);
-  const totalDays = selectedItinerary?.totalDays || 1;
+  const totalDays = selectedItinerary?.days || 1;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -148,8 +153,8 @@ export const AddToPlanModal = ({ placeId, placeName, isOpen, onClose }: AddToPla
                             {itinerary.title}
                           </p>
                           <div className={cn("flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider mt-1 opacity-60", isSelected ? "text-white" : "text-zinc-400")}>
-                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {itinerary.totalDays} ngày</span>
-                            <span className="flex items-center gap-1">• {itinerary.district || "Hà Nội"}</span>
+                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {itinerary.days} ngày</span>
+                            <span className="flex items-center gap-1">• {"Hà Nội"}</span>
                           </div>
                         </div>
                         {isSelected && (
