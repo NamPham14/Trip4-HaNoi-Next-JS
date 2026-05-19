@@ -90,6 +90,24 @@ export const useSubmitReview = () => {
   });
 };
 
+export const useDeleteReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reviewId: number) => placeService.deleteReview(reviewId),
+    onSuccess: (_, reviewId) => {
+      toast.success("Đánh giá đã được xóa thành công!");
+      // Invalidate all place details as we don't know which place this review belonged to here
+      // Alternatively, we could pass placeId to the mutation
+      queryClient.invalidateQueries({ queryKey: placeKeys.all });
+      queryClient.invalidateQueries({ queryKey: placeKeys.myReviews() });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Không thể xóa đánh giá");
+    }
+  });
+};
+
 /**
  * Hook for fetching recommended places
  */

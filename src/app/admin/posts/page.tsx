@@ -4,27 +4,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FileText, 
-  Search, 
-  Trash2, 
-  Eye, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
   User,
-  Filter,
   Calendar,
   Image as ImageIcon
 } from 'lucide-react';
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
 import { DataTable } from '@/shared/components/ui/table-data';
 import { ColumnDef } from '@tanstack/react-table';
 import { postManagementService } from '@/features/places/services/post-management-api';
 import { PostManagement, PostStatus } from '@/features/places/types/post-management';
 import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialog';
 import { toast } from 'sonner';
-import { Label } from '@/shared/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { StatusBadge } from '@/shared/components/ui/status-badge';
+import { AdminFilters, FilterOption } from '@/shared/components/ui/admin-filters';
+import { TableActions } from '@/shared/components/ui/table-actions';
 import Image from 'next/image';
 import { PostApprovalModal } from '@/features/posts/components/PostApprovalModal';
 
@@ -101,30 +93,7 @@ export default function PostManagementPage() {
     { 
       accessorKey: "status", 
       header: "Trạng thái",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        let styles = "bg-gray-100 text-gray-600";
-        let icon = <Clock size={12} />;
-        if (status === 'APPROVED') {
-            styles = "bg-green-50 text-green-700 border-green-100";
-            icon = <CheckCircle size={12} />;
-        }
-        if (status === 'REJECTED') {
-            styles = "bg-red-50 text-red-700 border-red-100";
-            icon = <XCircle size={12} />;
-        }
-        if (status === 'PENDING') {
-            styles = "bg-yellow-50 text-yellow-700 border-yellow-100";
-            icon = <Clock size={12} />;
-        }
-        
-        return (
-          <span className={`px-2 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 w-fit ${styles}`}>
-            {icon}
-            {status}
-          </span>
-        );
-      }
+      cell: ({ row }) => <StatusBadge status={row.original.status} type="post" />
     },
     {
       accessorKey: "viewCount",
@@ -135,29 +104,19 @@ export default function PostManagementPage() {
       id: "actions",
       header: () => <div className="text-right">Thao tác</div>,
       cell: ({ row }) => (
-        <div className="flex justify-end gap-1">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="text-primary hover:bg-primary/5"
-            onClick={() => { setSelectedItem(row.original); setIsApprovalOpen(true); }}
-            title="Duyệt bài viết"
-          >
-            <Eye size={16} />
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="text-red-500 hover:bg-red-50" 
-            onClick={() => { setSelectedItem(row.original); setIsDeleteOpen(true); }}
-            title="Xóa vĩnh viễn"
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
+        <TableActions 
+          onView={() => { setSelectedItem(row.original); setIsApprovalOpen(true); }}
+          onDelete={() => { setSelectedItem(row.original); setIsDeleteOpen(true); }}
+          viewTitle="Duyệt bài viết"
+        />
       ),
     },
+  ];
+
+  const statusOptions: FilterOption[] = [
+    { label: 'Đang chờ duyệt', value: 'PENDING', icon: <div className="w-2 h-2 rounded-full bg-yellow-400" /> },
+    { label: 'Đã phê duyệt', value: 'APPROVED', icon: <div className="w-2 h-2 rounded-full bg-green-500" /> },
+    { label: 'Đã từ chối', value: 'REJECTED', icon: <div className="w-2 h-2 rounded-full bg-red-500" /> },
   ];
 
   return (
@@ -169,79 +128,21 @@ export default function PostManagementPage() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border-2 border-gray-100 shadow-md mb-8 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="relative flex-1 w-full">
-                <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-gray-500">Tìm kiếm</Label>
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                    <Input 
-                        className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium" 
-                        placeholder="Tìm tiêu đề bài viết..." 
-                        value={searchTerm} 
-                        onChange={(e) => { setSearchTerm(e.target.value); setPageIndex(0); }} 
-                    />
-                </div>
-            </div>
-            
-            <div className="w-full md:w-[260px]">
-                <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Lọc theo trạng thái</Label>
-                <Select value={selectedStatus} onValueChange={(val) => { setSelectedStatus(val); setPageIndex(0); }}>
-                    <SelectTrigger className="h-11 border-2 border-gray-200 bg-gray-100 font-bold text-gray-800 hover:border-primary/50 hover:bg-gray-200 transition-all shadow-sm rounded-xl">
-                        <div className="flex items-center gap-2">
-                            {selectedStatus === 'all' && <Filter size={16} className="text-gray-500" />}
-                            {selectedStatus === 'PENDING' && <Clock size={16} className="text-yellow-600" />}
-                            {selectedStatus === 'APPROVED' && <CheckCircle size={16} className="text-green-600" />}
-                            {selectedStatus === 'REJECTED' && <XCircle size={16} className="text-red-600" />}
-                            <SelectValue placeholder="Chọn trạng thái" />
-                        </div>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-2 border-gray-100 shadow-xl p-1">
-                        <SelectItem value="all" className="rounded-lg focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer py-2.5">
-                            <div className="flex items-center gap-2 font-bold">
-                                <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-                                Tất cả bài viết
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="PENDING" className="rounded-lg focus:bg-yellow-50 focus:text-yellow-700 transition-colors cursor-pointer py-2.5">
-                            <div className="flex items-center gap-2 font-bold">
-                                <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
-                                Đang chờ duyệt
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="APPROVED" className="rounded-lg focus:bg-green-50 focus:text-green-700 transition-colors cursor-pointer py-2.5">
-                            <div className="flex items-center gap-2 font-bold">
-                                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                Đã phê duyệt
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="REJECTED" className="rounded-lg focus:bg-red-50 focus:text-red-700 transition-colors cursor-pointer py-2.5">
-                            <div className="flex items-center gap-2 font-bold">
-                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                                Đã từ chối
-                            </div>
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-
-            <Button 
-                variant="outline" 
-                className="h-11 px-4 border-2 border-gray-100 text-gray-500 hover:text-primary hover:border-primary transition-all"
-                onClick={() => {
-                    setSearchTerm('');
-                    setSelectedStatus('all');
-                    setPageIndex(0);
-                }}
-            >
-                Đặt lại
-            </Button>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 w-fit px-3 py-1 rounded-full border border-gray-100">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-            Có <strong>{totalElements}</strong> bài viết trong hệ thống
-        </div>
-      </div>
+      <AdminFilters 
+        searchTerm={searchTerm}
+        onSearchChange={(val) => { setSearchTerm(val); setPageIndex(0); }}
+        searchPlaceholder="Tìm tiêu đề bài viết..."
+        statusValue={selectedStatus}
+        onStatusChange={(val) => { setSelectedStatus(val); setPageIndex(0); }}
+        statusOptions={statusOptions}
+        onReset={() => {
+          setSearchTerm('');
+          setSelectedStatus('all');
+          setPageIndex(0);
+        }}
+        totalElements={totalElements}
+        unitName="bài viết"
+      />
 
       <DataTable 
         columns={columns} 

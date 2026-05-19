@@ -121,5 +121,9 @@ export const placeService = {
   getSavedPlaces: async (): Promise<any[]> => {
     const response = await axiosInstance.get<ApiResponse<any[]>>('/saved-places/my');
     return response.data.data;
+  },
+
+  deleteReview: async (reviewId: number): Promise<void> => {
+    await axiosInstance.delete(`/reviews/${reviewId}`);
   }
 };

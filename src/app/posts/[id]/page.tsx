@@ -11,11 +11,14 @@ import { Button } from '@/shared/components/ui/button'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { PostCard } from '@/features/posts/components/PostCard'
+import { useQueryClient } from '@tanstack/react-query'
+import { Post } from '@/features/posts/types/post'
 
 export default function PostDetailPage() {
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
+  const queryClient = useQueryClient()
 
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['post', id],
@@ -53,6 +56,17 @@ export default function PostDetailPage() {
     )
   }
 
+  const handleLikeUpdate = (postId: number, isLiked: boolean, likeCount: number) => {
+    queryClient.setQueryData(['post', id], (oldData: Post | undefined) => {
+      if (!oldData) return oldData
+      return {
+        ...oldData,
+        isLiked,
+        likeCount,
+      }
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
@@ -67,7 +81,7 @@ export default function PostDetailPage() {
             Quay lại
           </button>
 
-          <PostCard post={post} />
+          <PostCard post={post} onLikeUpdate={handleLikeUpdate} />
         </div>
       </main>
 

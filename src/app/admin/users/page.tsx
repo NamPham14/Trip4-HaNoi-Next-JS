@@ -4,14 +4,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Users, 
-  Search, 
-  Edit2, 
-  Eye, 
-  UserMinus, 
-  Shield, 
 } from 'lucide-react';
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
 import { DataTable } from '@/shared/components/ui/table-data';
 import { ColumnDef } from '@tanstack/react-table';
 import { userManagementService } from '@/features/auth/services/user-management-api';
@@ -22,6 +15,9 @@ import { DeleteConfirmDialog } from '@/shared/components/ui/delete-confirm-dialo
 import { CrudModal } from '@/shared/components/ui/crud-modal';
 import { DetailModal } from '@/shared/components/ui/detail-modal';
 import { toast } from 'sonner';
+import { StatusBadge } from '@/shared/components/ui/status-badge';
+import { AdminFilters } from '@/shared/components/ui/admin-filters';
+import { TableActions } from '@/shared/components/ui/table-actions';
 import Image from 'next/image';
 import { UserForm } from '@/features/auth/components/UserForm';
 
@@ -116,19 +112,7 @@ export default function UserManagementPage() {
     { 
       accessorKey: "status", 
       header: "Trạng thái",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        let styles = "bg-gray-100 text-gray-600";
-        if (status === 'ACTIVE') styles = "bg-green-50 text-green-700 border-green-100";
-        if (status === 'NONE') styles = "bg-red-50 text-red-700 border-red-100";
-        if (status === 'INACTIVE') styles = "bg-yellow-50 text-yellow-700 border-yellow-100";
-        
-        return (
-          <span className={`px-2 py-1 rounded-full text-[10px] font-bold border ${styles}`}>
-            {status}
-          </span>
-        );
-      }
+      cell: ({ row }) => <StatusBadge status={row.original.status} type="user" />
     },
     {
       accessorKey: "createdAt",
@@ -139,19 +123,12 @@ export default function UserManagementPage() {
       id: "actions",
       header: () => <div className="text-right">Thao tác</div>,
       cell: ({ row }) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => { setSelectedItem(row.original); setIsDetailOpen(true); }}><Eye size={16} /></Button>
-          <Button variant="ghost" size="icon" onClick={() => openForm(row.original)}><Edit2 size={16} /></Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="text-red-500 hover:bg-red-50" 
-            onClick={() => { setSelectedItem(row.original); setIsDeleteOpen(true); }}
-            disabled={row.original.status === 'INACTIVE'}
-          >
-            <UserMinus size={16} />
-          </Button>
-        </div>
+        <TableActions 
+          onView={() => { setSelectedItem(row.original); setIsDetailOpen(true); }}
+          onEdit={() => openForm(row.original)}
+          onDelete={() => { setSelectedItem(row.original); setIsDeleteOpen(true); }}
+          deleteTitle="Vô hiệu hóa"
+        />
       ),
     },
   ];
@@ -165,20 +142,17 @@ export default function UserManagementPage() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border shadow-sm mb-6 flex justify-between items-center">
-        <div className="relative max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <Input 
-            className="pl-10 h-11" 
-            placeholder="Tìm theo tên, email..." 
-            value={searchTerm} 
-            onChange={(e) => { setSearchTerm(e.target.value); setPageIndex(0); }} 
-          />
-        </div>
-        <div className="flex gap-4 items-center">
-          <div className="text-sm">Tổng: <strong>{totalElements}</strong> người dùng</div>
-        </div>
-      </div>
+      <AdminFilters 
+        searchTerm={searchTerm}
+        onSearchChange={(val) => { setSearchTerm(val); setPageIndex(0); }}
+        searchPlaceholder="Tìm theo tên, email..."
+        onReset={() => {
+          setSearchTerm('');
+          setPageIndex(0);
+        }}
+        totalElements={totalElements}
+        unitName="người dùng"
+      />
 
       <DataTable 
         columns={columns} 

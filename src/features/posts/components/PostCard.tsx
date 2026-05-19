@@ -1,28 +1,56 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Heart, MessageSquare, Share2, MoreHorizontal, MapPin, User } from 'lucide-react'
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  MoreHorizontal,
+  MapPin,
+  User,
+  AlertCircle,
+  Link as LinkIcon,
+  EyeOff,
+} from 'lucide-react'
 import Image from 'next/image'
 import { Post } from '@/features/posts/types/post'
 import { postService } from '@/features/posts/services/post-api'
 import { toast } from 'sonner'
 import { CommentModal } from './CommentModal'
+import { ReportModal } from './ReportModal'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu'
 
 interface PostCardProps {
   post: Post
-  onLikeUpdate: (postId: number, isLiked: boolean, likeCount: number) => void
+  onLikeUpdate?: (postId: number, isLiked: boolean, likeCount: number) => void
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false)
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [commentCount, setCommentCount] = useState(post.commentCount)
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}/posts/${post.id}`
+    navigator.clipboard.writeText(url)
+    toast.success('Đã sao chép liên kết bài viết')
+  }
 
   const handleLike = async () => {
     try {
       await postService.toggleLike(post.id)
       const newIsLiked = !post.isLiked
-      const newLikeCount = post.isLiked ? post.likeCount - 1 : post.likeCount + 1
-      onLikeUpdate(post.id, newIsLiked, newLikeCount)
+      const newLikeCount = post.isLiked
+        ? post.likeCount - 1
+        : post.likeCount + 1
+      if (onLikeUpdate) {
+        onLikeUpdate(post.id, newIsLiked, newLikeCount)
+      }
     } catch (error) {
       toast.error('Vui lòng đăng nhập để thích bài viết')
     }
@@ -49,20 +77,49 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
             )}
           </div>
           <div>
-            <h3 className="font-bold text-gray-900 text-xs sm:text-sm">{post.username}</h3>
+            <h3 className="font-bold text-gray-900 text-xs sm:text-sm">
+              {post.username}
+            </h3>
             <p className="text-[9px] sm:text-[10px] text-gray-500">
               {new Date(post.createdAt).toLocaleString('vi-VN')}
             </p>
           </div>
         </div>
-        <button className="text-gray-400 hover:text-gray-600 p-1">
-          <MoreHorizontal size={18} />
-        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors">
+              <MoreHorizontal size={18} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-48 rounded-xl p-1 shadow-xl border-gray-100 bg-white"
+          >
+            <DropdownMenuItem
+              onClick={handleCopyLink}
+              className="flex items-center gap-2 font-bold text-xs p-2.5 rounded-lg cursor-pointer"
+            >
+              <LinkIcon size={14} />
+              Sao chép liên kết
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => setIsReportModalOpen(true)}
+              className="flex items-center gap-2 font-bold text-xs p-2.5 rounded-lg cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50"
+            >
+              <AlertCircle size={14} />
+              Báo cáo bài viết
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Post Content */}
       <div className="px-3 sm:px-4 pb-2">
-        <h2 className="font-bold text-gray-900 text-sm sm:text-base mb-1">{post.title}</h2>
+        <h2 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
+          {post.title}
+        </h2>
         <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
           {post.content}
         </p>
@@ -110,13 +167,10 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
             onClick={handleLike}
             className={`flex items-center gap-1.5 transition-colors ${post.isLiked ? 'text-hanoi-red' : 'text-gray-500 hover:text-hanoi-red'}`}
           >
-            <Heart
-              size={18}
-              fill={post.isLiked ? 'currentColor' : 'none'}
-            />
+            <Heart size={18} fill={post.isLiked ? 'currentColor' : 'none'} />
             <span className="text-xs font-bold">{post.likeCount}</span>
           </button>
-          <button 
+          <button
             onClick={() => setIsCommentModalOpen(true)}
             className="flex items-center gap-1.5 text-gray-500 hover:text-blue-500 transition-colors"
           >
@@ -138,6 +192,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeUpdate }) => {
         postId={post.id}
         postTitle={post.title}
         onCommentCountChange={(newCount) => setCommentCount(newCount)}
+      />
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        targetId={post.id}
+        reportType="POST"
+        targetTitle={post.title}
       />
     </div>
   )
