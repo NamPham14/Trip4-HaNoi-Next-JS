@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, MapPin, FileText, Map, AlertCircle } from 'lucide-react';
+import { Users, MapPin, FileText, Map, AlertCircle, DollarSign, Crown } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { DashboardSummary, ReportResponse } from '../../types';
 
@@ -15,6 +15,20 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
   loading 
 }) => {
   const stats = [
+    { 
+      label: 'Doanh thu', 
+      value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(summary?.totalRevenue || 0), 
+      icon: DollarSign,
+      color: 'bg-emerald-100 text-green-700',
+      href: '/admin/payments'
+    },
+    { 
+      label: 'Gói PRO', 
+      value: summary?.proUserCount || 0, 
+      icon: Crown,
+      color: 'bg-yellow-100 text-orange-600',
+      href: '/admin/payments'
+    },
     { 
       label: 'Người dùng', 
       value: summary?.totalUsers || 0, 
@@ -53,7 +67,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
       {stats.map((stat) => (
         <StatsCard 
           key={stat.label} 

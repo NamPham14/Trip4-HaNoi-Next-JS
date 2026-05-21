@@ -52,8 +52,8 @@ export const authService = {
   /**
    * Refresh access token
    */
-  refresh: async (refreshToken: string): Promise<{ accessToken: string }> => {
-    const response = await axiosInstance.post<ApiResponse<{ accessToken: string }>>('/auth/refresh', { token: refreshToken });
+  refresh: async (refreshToken: string): Promise<AuthResponse> => {
+    const response = await axiosInstance.post<ApiResponse<AuthResponse>>('/auth/refresh-token', { refreshToken });
     return response.data.data;
   }
 };

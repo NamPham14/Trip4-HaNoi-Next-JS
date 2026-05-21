@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     // Tránh vòng lặp vô tận nếu API refresh cũng trả về 401
-    if (originalRequest.url?.includes('/auth/refresh')) {
+    if (originalRequest.url?.includes('/auth/refresh-token')) {
       return Promise.reject(error);
     }
 
@@ -62,14 +62,23 @@ axiosInstance.interceptors.response.use(
         }
 
         // Gọi API refresh để lấy access token mới
-        const { accessToken } = await authService.refresh(refreshToken);
+        const { accessToken, refreshToken: newRefreshToken } = await authService.refresh(refreshToken);
         
-        // Cập nhật cookie mới
+        // Cập nhật access token mới
         Cookies.set('access_token', accessToken, { 
           expires: 7, 
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax'
         });
+
+        // Cập nhật refresh token mới (nếu có)
+        if (newRefreshToken) {
+          Cookies.set('refresh_token', newRefreshToken, { 
+            expires: 30, 
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+          });
+        }
 
         // Gửi lại request ban đầu với token mới
         if (originalRequest.headers) {

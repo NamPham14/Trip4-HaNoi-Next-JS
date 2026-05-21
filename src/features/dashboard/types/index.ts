@@ -30,6 +30,8 @@ export interface DashboardSummary {
   totalPlaces: number;
   totalPosts: number;
   totalItineraries: number;
+  totalRevenue: number;
+  proUserCount: number;
   usersByRole: Record<string, number>;
   conversionRate: number;
   heatmap: LocationCoordinateDTO[];
@@ -49,6 +51,7 @@ export interface SocialAnalytics {
 
 export interface OperationAnalytics {
   chatVolumeByHour: Record<number, number>;
+  revenueGrowth: Record<string, number>;
   aiTopKeywords: string[];
 }
 

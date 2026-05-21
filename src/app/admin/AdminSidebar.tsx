@@ -11,7 +11,8 @@ import {
   Tags,
   MessageSquare,
   Star,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/auth-store';
@@ -27,6 +28,7 @@ const menuItems = [
   { icon: MessageSquare, label: 'Bình luận', href: '/admin/comments', roles: ['ADMIN', 'STAFF'] },
   { icon: Star, label: 'Đánh giá (Review)', href: '/admin/reviews', roles: ['ADMIN', 'STAFF'] },
   { icon: AlertTriangle, label: 'Báo cáo vi phạm', href: '/admin/reports', roles: ['ADMIN', 'STAFF'] },
+  { icon: CreditCard, label: 'Giao dịch', href: '/admin/payments', roles: ['ADMIN', 'STAFF'] },
   { icon: Users, label: 'Người dùng', href: '/admin/users', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Vai trò', href: '/admin/roles', roles: ['ADMIN'] },
   { icon: ShieldCheck, label: 'Quản lý Quyền', href: '/admin/permissions', roles: ['ADMIN'] },

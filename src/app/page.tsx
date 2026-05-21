@@ -16,6 +16,7 @@ import { useUser } from "@/features/auth/hooks/use-auth";
 import { useFeaturedItineraries } from "@/features/itinerary/hooks/use-featured-itineraries";
 import { ItineraryCard } from "@/features/itinerary/components/ItineraryCard";
 import { Itinerary } from "@/features/itinerary/types/itinerary";
+import { PricingSection } from "@/features/payment/components/pricing-section";
 
 export default function HomePage() {
   const { isAuthenticated } = useUser();
@@ -202,6 +203,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <PricingSection />
 
       <Footer />
     </div>

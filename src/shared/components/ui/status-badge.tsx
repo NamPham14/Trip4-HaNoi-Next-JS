@@ -32,6 +32,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type = 'post',
     case 'ACTIVE':
     case 'PUBLISHED':
     case 'COMPLETED':
+    case 'SUCCESS':
       styles = "bg-green-50 text-green-700 border-green-100";
       icon = <CheckCircle size={12} />;
       break;

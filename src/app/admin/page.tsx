@@ -71,6 +71,15 @@ export default function DashboardPage() {
             loading={loading} 
           />
         </div>
+        <div className="lg:col-span-3">
+          <GrowthChart 
+            data={data?.operations.revenueGrowth || {}} 
+            title="Tăng trưởng doanh thu (VNĐ)" 
+            loading={loading}
+            color="#10b981"
+            isCurrency={true}
+          />
+        </div>
       </div>
 
       {/* 3. Operational Row */}

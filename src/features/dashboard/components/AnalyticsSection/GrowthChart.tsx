@@ -14,14 +14,33 @@ interface GrowthChartProps {
   data: Record<string, number>;
   title: string;
   loading?: boolean;
+  color?: string;
+  isCurrency?: boolean;
 }
 
-export const GrowthChart: React.FC<GrowthChartProps> = ({ data, title, loading }) => {
+export const GrowthChart: React.FC<GrowthChartProps> = ({ 
+  data, 
+  title, 
+  loading, 
+  color = "#3b82f6", 
+  isCurrency = false 
+}) => {
   // Convert Record<string, number> to Array<{ name: string, value: number }>
   const chartData = Object.entries(data).map(([key, value]) => ({
     name: key,
     value: value
   })).sort((a, b) => a.name.localeCompare(b.name));
+
+  const formatValue = (val: number) => {
+    if (isCurrency) {
+      return new Intl.NumberFormat('vi-VN', { 
+        style: 'currency', 
+        currency: 'VND', 
+        maximumFractionDigits: 0 
+      }).format(val);
+    }
+    return val;
+  };
 
   if (loading) {
     return (
@@ -40,15 +59,15 @@ export const GrowthChart: React.FC<GrowthChartProps> = ({ data, title, loading }
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+            <YAxis tickFormatter={(value) => isCurrency ? `${value/1000}k` : value} />
+            <Tooltip formatter={(value: number) => [formatValue(value), isCurrency ? "Doanh thu" : "Số lượng"]} />
             <Legend />
             <Line 
               type="monotone" 
               dataKey="value" 
-              stroke="#3b82f6" 
-              strokeWidth={2} 
-              name="Số lượng"
+              stroke={color} 
+              strokeWidth={3} 
+              name={isCurrency ? "Doanh thu" : "Số lượng"}
               activeDot={{ r: 8 }} 
             />
           </LineChart>

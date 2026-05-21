@@ -20,8 +20,19 @@ export const useChat = () => {
       setMessages((prev) => [...prev, aiMessage]);
     },
     onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || "AI đang bận một chút, bạn thử lại sau nhé!";
-      toast.error(errorMessage);
+      if (error.response?.status === 402) {
+        toast.error("Bạn đã hết lượt chat miễn phí hôm nay!", {
+          description: "Nâng cấp PRO để chat không giới hạn nhé.",
+          action: {
+            label: "Nâng cấp ngay",
+            onClick: () => window.location.href = "/pricing"
+          },
+          duration: 10000,
+        });
+      } else {
+        const errorMessage = error.response?.data?.message || "AI đang bận một chút, bạn thử lại sau nhé!";
+        toast.error(errorMessage);
+      }
     },
   });
 
