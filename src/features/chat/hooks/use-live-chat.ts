@@ -67,6 +67,7 @@ export const useLiveChat = (initialRoomId: number | null = null) => {
         id: msg.id.toString(),
         role: msg.type === 'USER' ? 'user' : msg.type === 'STAFF' ? 'staff' : 'system',
         content: msg.content,
+        mediaUrls: msg.mediaUrls,
         timestamp: new Date(msg.timestamp).getTime(),
         senderName: msg.senderName || undefined,
         senderAvatar: msg.senderAvatar || undefined,
@@ -92,6 +93,7 @@ export const useLiveChat = (initialRoomId: number | null = null) => {
           id: msgData.id.toString(),
           role: msgData.type === 'USER' ? 'user' : msgData.type === 'STAFF' ? 'staff' : 'system',
           content: msgData.content,
+          mediaUrls: msgData.mediaUrls,
           timestamp: new Date(msgData.timestamp).getTime(),
           senderName: msgData.senderName || undefined,
           senderAvatar: msgData.senderAvatar || undefined,
@@ -166,17 +168,34 @@ export const useLiveChat = (initialRoomId: number | null = null) => {
     }
   }, [roomId, isConnected, subscribeToRoom, fetchHistory]);
 
-  const sendMessage = useCallback((content: string) => {
-    if (!content.trim() || !isConnected) {
+  const sendMessage = useCallback(async (content: string, files?:File[]) => {
+    // dieu kien gui: phai co chu hoa co anh
+    const hasContent = content.trim().length >0;
+    const hasFiles = files && files.length > 0;
+
+
+
+    if ((!hasContent && !hasFiles) || !isConnected) {
         console.warn('[Live Chat] Cannot send: not connected or empty content');
         return;
     }
+    try{
+       let uploadedUrls: string[] = [];
+        //  Nếu có file, thực hiện upload lên Cloudinary trước
+       if (hasFiles) {
+          uploadedUrls = await chatService.uploadImages(files);
+       }
+       //  Gửi qua WebSocket kèm link ảnh
+       socketService.send('/app/chat.sendMessage',{
+        roomId: roomIdRef.current,
+        content:content,
+        mediaUrls:uploadedUrls,
+       });
+
+    }catch(error){
+      console.error('[Live Chat] Error uploading images or sending message:', error);
+    }
     
-    console.log('[Live Chat] Sending message to room:', roomIdRef.current);
-    socketService.send('/app/chat.sendMessage', {
-      roomId: roomIdRef.current,
-      content: content,
-    });
   }, [isConnected]);
 
   return {

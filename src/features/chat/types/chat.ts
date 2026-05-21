@@ -24,6 +24,7 @@ export interface ChatMessageResponse {
   senderName: string | null;
   senderAvatar: string | null;
   timestamp: string;
+  mediaUrls?:string [];
 }
 
 export interface ChatRoomResponse {
@@ -45,6 +46,7 @@ export interface Message {
   id: string;
   role: 'user' | 'ai' | 'staff' | 'system';
   content: string | ChatAIResponse;
+  mediaUrls?:string [];
   timestamp: number;
   senderName?: string;
   senderAvatar?: string;

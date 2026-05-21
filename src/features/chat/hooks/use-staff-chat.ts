@@ -69,6 +69,8 @@ export const useStaffChat = () => {
           id: msg.id.toString(),
           role: msg.type === 'USER' ? 'user' : msg.type === 'STAFF' ? 'staff' : 'system',
           content: msg.content,
+          // THÊM: Map danh sách ảnh từ lịch sử
+          mediaUrls: msg.mediaUrls, 
           timestamp: new Date(msg.timestamp).getTime(),
           senderName: msg.senderName || undefined,
           senderAvatar: msg.senderAvatar || undefined,
@@ -150,11 +152,13 @@ export const useStaffChat = () => {
     
     socketService.subscribe(`/topic/chat/${activeRoomId}`, (message) => {
       const msgData: any = JSON.parse(message.body);
-      if (msgData.content !== undefined) {
+      if (msgData.content !== undefined || msgData.mediaUrls !== undefined) {
         const newMessage: Message = {
           id: msgData.id.toString(),
           role: msgData.type === 'USER' ? 'user' : msgData.type === 'STAFF' ? 'staff' : 'system',
           content: msgData.content,
+          // THÊM: Nhận ảnh mới từ socket
+          mediaUrls: msgData.mediaUrls, 
           timestamp: new Date(msgData.timestamp).getTime(),
           senderName: msgData.senderName || undefined,
           senderAvatar: msgData.senderAvatar || undefined,
@@ -210,12 +214,33 @@ export const useStaffChat = () => {
     setActiveRoomId(roomId);
   };
 
-  const sendMessage = (content: string) => {
-    if (!activeRoomId || !content.trim()) return;
-    socketService.send('/app/chat.sendMessage', {
-      roomId: activeRoomId,
-      content: content
-    });
+  // CẬP NHẬT: Hàm gửi tin nhắn hỗ trợ cả chữ và ảnh
+  const sendMessage = async (content: string, files?: File[]) => {
+    if (!activeRoomId) return;
+
+    const hasText = content.trim().length > 0;
+    const hasFiles = files && files.length > 0;
+
+    if (!hasText && !hasFiles) return;
+
+    try {
+      let uploadedUrls: string[] = [];
+
+      // 1. Nếu Staff có chọn ảnh, upload lên Cloudinary trước
+      if (hasFiles) {
+        uploadedUrls = await chatService.uploadImages(files);
+      }
+
+      // 2. Gửi qua WebSocket kèm link ảnh
+      socketService.send('/app/chat.sendMessage', {
+        roomId: activeRoomId,
+        content: content,
+        mediaUrls: uploadedUrls
+      });
+    } catch (error) {
+      console.error('[Staff Chat] Error sending message/images:', error);
+      toast.error('Gửi tin nhắn thất bại');
+    }
   };
 
   const addInternalNote = (content: string) => {
