@@ -1,48 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { itineraryService } from '../services/itinerary-api';
-import { Itinerary } from '../types/itinerary';
 import { toast } from 'sonner';
 
 export const useItinerary = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [myItineraries, setMyItineraries] = useState<Itinerary[]>([]);
+  const queryClient = useQueryClient();
 
-  const fetchMyItineraries = async () => {
-    setIsLoading(true);
-    try {
-      const data = await itineraryService.getMyItineraries();
-      setMyItineraries(data);
-    } catch (error) {
-      console.error('Failed to fetch itineraries', error);
-      toast.error('Không thể tải danh sách lịch trình');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Query lấy danh sách lịch trình của tôi
+  const { data: myItineraries = [], isLoading, refetch } = useQuery({
+    queryKey: ['my-itineraries'],
+    queryFn: itineraryService.getMyItineraries,
+    staleTime: 5 * 60 * 1000, // 5 phút
+  });
 
-  const saveAIItinerary = async (title: string, timeline: any[]) => {
-    setIsLoading(true);
-    try {
-      const saved = await itineraryService.saveAIItinerary(
-        title || `Lịch trình AI - ${new Date().toLocaleDateString('vi-VN')}`,
-        timeline
-      );
+  // Mutation lưu lịch trình AI
+  const saveAIItineraryMutation = useMutation({
+    mutationFn: (variables: { title: string, timeline: any[] }) => 
+      itineraryService.saveAIItinerary(
+        variables.title || `Lịch trình AI - ${new Date().toLocaleDateString('vi-VN')}`,
+        variables.timeline
+      ),
+    onSuccess: () => {
       toast.success('Đã lưu lịch trình thành công!');
-      return saved;
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['my-itineraries'] });
+    },
+    onError: (error) => {
       console.error('Failed to save AI itinerary', error);
       toast.error('Lỗi khi lưu lịch trình');
-      return null;
-    } finally {
-      setIsLoading(false);
     }
-  };
+  });
 
   return {
     isLoading,
     myItineraries,
-    fetchMyItineraries,
-    saveAIItinerary
+    fetchMyItineraries: refetch,
+    saveAIItinerary: saveAIItineraryMutation.mutateAsync,
+    isSaving: saveAIItineraryMutation.isPending
   };
 };

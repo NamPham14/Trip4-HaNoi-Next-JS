@@ -3,7 +3,7 @@
 
 import React from "react";
 import { Navbar } from "@/shared/components/navbar";
-import { useUser, useMyInfo } from "@/features/auth/hooks/use-auth";
+import { useUser } from "@/features/auth/hooks/use-auth";
 import { useProfileForm } from "@/features/auth/hooks/use-profile-form";
 import { useMyReviews, useSavedPlaces } from "@/features/places/hooks/use-places";
 import { useItinerary } from "@/features/itinerary/hooks/use-itinerary";
@@ -15,18 +15,19 @@ import {
   Calendar, 
   Check, 
   Loader2, 
-  ArrowLeft
+  Bookmark
 } from "lucide-react";
 import Link from "next/link";
 import { ProfileHeader } from "@/features/auth/components/profile/ProfileHeader";
 import { ProfileStats } from "@/features/auth/components/profile/ProfileStats";
 import { ProfileInfoTab } from "@/features/auth/components/profile/ProfileInfoTab";
+import { SecurityTab } from "@/features/auth/components/profile/SecurityTab";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useUser();
   const { data: savedPlaces } = useSavedPlaces();
   const { data: myReviews } = useMyReviews(isAuthenticated);
-  const { myItineraries, fetchMyItineraries } = useItinerary();
+  const { myItineraries } = useItinerary();
   
   const {
     isEditing,
@@ -40,10 +41,6 @@ export default function ProfilePage() {
     startEditing,
     cancelEditing
   } = useProfileForm(user);
-
-  React.useEffect(() => {
-    if (isAuthenticated) fetchMyItineraries();
-  }, [isAuthenticated]);
 
   if (!isAuthenticated) return <NotAuthenticatedView />;
 
@@ -98,7 +95,7 @@ export default function ProfilePage() {
             </TabsContent>
             
             <TabsContent value="security">
-              <SecurityPlaceholder />
+              <SecurityTab user={user} />
             </TabsContent>
             
             <TabsContent value="activity">
@@ -119,7 +116,6 @@ export default function ProfilePage() {
   );
 }
 
-// Sub-components moved out of the main page to keep it clean
 const NotAuthenticatedView = () => (
   <div className="min-h-screen bg-hanoi-cream flex flex-col items-center justify-center p-4">
     <div className="bg-white p-8 rounded-[40px] shadow-2xl shadow-zinc-200 text-center max-w-sm w-full">
@@ -134,21 +130,6 @@ const NotAuthenticatedView = () => (
         </Button>
       </Link>
     </div>
-  </div>
-);
-
-const SecurityPlaceholder = () => (
-  <div className="bg-white p-8 md:p-12 rounded-[32px] md:rounded-[48px] border border-zinc-100 shadow-sm max-w-2xl">
-    <div className="flex items-center gap-4 mb-10">
-      <div className="bg-hanoi-red/10 p-3 rounded-2xl">
-        <Shield className="h-8 w-8 text-hanoi-red" />
-      </div>
-      <div>
-        <h2 className="text-2xl font-black text-zinc-900 leading-none">Bảo mật tài khoản</h2>
-        <p className="text-zinc-500 font-medium text-sm mt-2">Cập nhật mật khẩu để bảo vệ thông tin của bạn</p>
-      </div>
-    </div>
-    <div className="text-zinc-400 italic">Tính năng đổi mật khẩu đang được phát triển...</div>
   </div>
 );
 

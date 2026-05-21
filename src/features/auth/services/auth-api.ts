@@ -15,6 +15,14 @@ export const authService = {
   },
 
   /**
+   * Login with Google
+   */
+  loginGoogle: async (idToken: string): Promise<AuthResponse> => {
+    const response = await axiosInstance.post<ApiResponse<AuthResponse>>('/auth/login-google', { idToken });
+    return response.data.data;
+  },
+
+  /**
    * Register a new account
    * Note: Backend uses /api/users (POST) with multipart/form-data
    */

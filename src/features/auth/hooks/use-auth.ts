@@ -41,6 +41,37 @@ export const useLogin = () => {
 };
 
 /**
+ * Hook for Google Login
+ */
+export const useGoogleLoginHook = () => {
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: authService.loginGoogle,
+    onSuccess: (data) => {
+      setAuth(data.user, data.accessToken, data.refreshToken);
+      
+      const isAdmin = data.user.roles.some(role => role.name === 'ADMIN');
+      const isStaff = data.user.roles.some(role => role.name === 'STAFF');
+      
+      if (isAdmin || isStaff) {
+        toast.success(`Chào mừng ${isAdmin ? 'Admin' : 'Nhân viên'} quay trở lại!`);
+        router.push('/admin');
+      } else {
+        toast.success("Đăng nhập bằng Google thành công!");
+        router.push('/');
+      }
+      
+      router.refresh();
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Đăng nhập Google thất bại.");
+    }
+  });
+};
+
+/**
  * Hook for Registration
  */
 export const useRegister = () => {
