@@ -1,0 +1,48 @@
+name: Trip4 Hanoi FE
+run-name: ${{github.action}}
+on:
+  push:
+    branches:
+      - master
+      - main
+      - dev
+
+jobs:
+  ci-fe-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{secrets.DOCKER_USERNAME}}/frontend-service:latest
+            ${{secrets.DOCKER_USERNAME}}/frontend-service:${{github.sha}}

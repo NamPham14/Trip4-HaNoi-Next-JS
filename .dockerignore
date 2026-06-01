@@ -1,0 +1,11 @@
+# Cấu hình bỏ qua các thư mục/file không cần copy vào Docker
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.gitignore
+.env*.local
+.vscode
+.idea
+docs

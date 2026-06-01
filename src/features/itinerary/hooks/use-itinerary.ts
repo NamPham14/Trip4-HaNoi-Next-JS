@@ -34,7 +34,8 @@ export const useItinerary = () => {
     isLoading,
     myItineraries,
     fetchMyItineraries: refetch,
-    saveAIItinerary: saveAIItineraryMutation.mutateAsync,
+    saveAIItinerary: (title: string, timeline: any[]) => 
+      saveAIItineraryMutation.mutateAsync({ title, timeline }),
     isSaving: saveAIItineraryMutation.isPending
   };
 };
