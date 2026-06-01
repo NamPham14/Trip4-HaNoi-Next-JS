@@ -6,15 +6,10 @@ on:
       - master
       - main
       - dev
-    paths:
-      - 'Trip4-HaNoi-Next-js/**'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Trip4-HaNoi-Next-js
 
     steps:
       - name: Checkout code
@@ -25,7 +20,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: './Trip4-HaNoi-Next-js/package-lock.json'
 
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
@@ -45,8 +39,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./Trip4-HaNoi-Next-js
-          file: ./Trip4-HaNoi-Next-js/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           build-args: |
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
@@ -76,10 +70,7 @@ jobs:
           script: |
             echo "Starting Deployment..."
             cd ~/trip4hanoi-deploy
-            # Cập nhật Image mới nhất
             docker-compose-v2 pull frontend-server
-            # Khởi động lại service frontend
             docker-compose-v2 up -d frontend-server
-            # Dọn dẹp các image cũ để tiết kiệm dung lượng
             docker image prune -f
             echo "Deployment Successful!"
