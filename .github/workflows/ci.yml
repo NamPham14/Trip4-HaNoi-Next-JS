@@ -1,5 +1,4 @@
 name: Trip4 Hanoi FE
-run-name: ${{ github.action }}
 
 on:
   push:
@@ -11,9 +10,8 @@ on:
       - 'Trip4-HaNoi-Next-js/**'
 
 jobs:
-  ci-fe-pipeline:
+  build-and-push:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./Trip4-HaNoi-Next-js
@@ -38,7 +36,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Login to Docker hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -50,7 +48,6 @@ jobs:
           context: ./Trip4-HaNoi-Next-js
           file: ./Trip4-HaNoi-Next-js/Dockerfile
           push: true
-
           build-args: |
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
@@ -61,7 +58,28 @@ jobs:
             NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
             NEXT_PUBLIC_FIREBASE_VAPID_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}
             NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
-
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/frontend-service:latest
-            ${{ secrets.DOCKER_USERNAME }}/frontend-service:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/trip-4-hanoi-fe:latest
+            ${{ secrets.DOCKER_USERNAME }}/trip-4-hanoi-fe:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Starting Deployment..."
+            cd ~/trip4hanoi-deploy
+            # Cập nhật Image mới nhất
+            docker-compose-v2 pull frontend-server
+            # Khởi động lại service frontend
+            docker-compose-v2 up -d frontend-server
+            # Dọn dẹp các image cũ để tiết kiệm dung lượng
+            docker image prune -f
+            echo "Deployment Successful!"
