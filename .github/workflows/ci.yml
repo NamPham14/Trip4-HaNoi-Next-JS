@@ -44,5 +44,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{secrets.DOCKER_USERNAME}}/frontend-service:latest
+            ${{secrets.DOCKER_USERNAME}}/trip-4-hanoi-fe:latest
             ${{secrets.DOCKER_USERNAME}}/frontend-service:${{github.sha}}
