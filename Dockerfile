@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package.json và package-lock.json trước để tận dụng Docker cache
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy toàn bộ source code
 COPY . .
