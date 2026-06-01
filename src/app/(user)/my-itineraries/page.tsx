@@ -78,7 +78,7 @@ export default function MyItinerariesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myItineraries.map((itinerary) => (
+            {Array.isArray(myItineraries) && myItineraries.map((itinerary) => (
               <Card key={itinerary.id} className="overflow-hidden border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl group">
                 <CardHeader className="bg-zinc-900 text-white p-5 md:p-6 relative min-h-[110px] md:min-h-[120px] flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-2">
