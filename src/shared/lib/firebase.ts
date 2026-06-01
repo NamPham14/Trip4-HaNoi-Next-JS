@@ -17,6 +17,13 @@ const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) 
 
 export const requestForToken = async (): Promise<string | null> => {
   try {
+    // Kiểm tra xem trình duyệt có hỗ trợ messaging không (đặc biệt là yêu cầu HTTPS)
+    const isSupported = typeof window !== 'undefined' && 'serviceWorker' in navigator && (await import('firebase/messaging')).isSupported();
+    if (!isSupported) {
+      console.warn("Firebase Messaging is not supported in this browser/environment.");
+      return null;
+    }
+
     const messaging = getMessaging(app);
     const status = await Notification.requestPermission();
     
@@ -34,10 +41,17 @@ export const requestForToken = async (): Promise<string | null> => {
 };
 
 export const onMessageListener = (): Promise<any> => {
-  const messaging = getMessaging(app);
-  return new Promise((resolve) => {
-    onMessage(messaging, (payload: any) => {
-      resolve(payload);
-    });
+  return new Promise(async (resolve) => {
+    try {
+      const isSupported = typeof window !== 'undefined' && (await import('firebase/messaging')).isSupported();
+      if (!isSupported) return;
+
+      const messaging = getMessaging(app);
+      onMessage(messaging, (payload: any) => {
+        resolve(payload);
+      });
+    } catch (err) {
+      console.error("Error in onMessageListener: ", err);
+    }
   });
 };
