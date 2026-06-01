@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthState>()(
         // Lưu trữ mã thông báo trong cookie cho các trình chặn SSR và API
         const cookieOptions = { 
           expires: 7, // 7 ngày
-          secure: process.env.NODE_ENV === 'production',
+          secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
           sameSite: 'lax' as const
         };
         

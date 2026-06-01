@@ -67,7 +67,7 @@ axiosInstance.interceptors.response.use(
         // Cập nhật access token mới
         Cookies.set('access_token', accessToken, { 
           expires: 7, 
-          secure: process.env.NODE_ENV === 'production',
+          secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
           sameSite: 'lax'
         });
 
@@ -75,7 +75,7 @@ axiosInstance.interceptors.response.use(
         if (newRefreshToken) {
           Cookies.set('refresh_token', newRefreshToken, { 
             expires: 30, 
-            secure: process.env.NODE_ENV === 'production',
+            secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
             sameSite: 'lax'
           });
         }
