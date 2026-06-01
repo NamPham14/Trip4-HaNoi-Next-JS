@@ -1,4 +1,4 @@
-name: Trip4 Hanoi FE
+name: Trip4 Hanoi FE (CI)
 
 on:
   push:
@@ -10,7 +10,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,23 +53,3 @@ jobs:
             NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/trip-4-hanoi-fe:latest
-            ${{ secrets.DOCKER_USERNAME }}/trip-4-hanoi-fe:${{ github.sha }}
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            echo "Starting Deployment..."
-            cd ~/trip4hanoi-deploy
-            docker-compose-v2 pull frontend-server
-            docker-compose-v2 up -d frontend-server
-            docker image prune -f
-            echo "Deployment Successful!"

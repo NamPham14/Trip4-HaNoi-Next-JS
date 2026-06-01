@@ -1,0 +1,27 @@
+name: Trip4 Hanoi FE (CD)
+
+on:
+  workflow_run:
+    workflows: ["Trip4 Hanoi FE (CI)"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Starting Deployment..."
+            cd ~/trip4hanoi-deploy
+            docker-compose-v2 pull frontend-server
+            docker-compose-v2 up -d frontend-server
+            docker image prune -f
+            echo "Deployment Successful!"
