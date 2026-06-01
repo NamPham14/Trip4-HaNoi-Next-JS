@@ -2,8 +2,8 @@ import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse } from "@/shared/types/api";
 
 export interface ChangePasswordRequest {
-  oldPassword: String;
-  newPassword: String;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface UserUpdateRequest {

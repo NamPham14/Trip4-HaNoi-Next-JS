@@ -13,6 +13,7 @@ interface PlaceMapProps {
 
 export const PlaceMap = ({ lat, lng, name }: PlaceMapProps) => {
   const mapContainerRef = React.useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = React.useRef<any>(null);
   const [isLeafletReady, setIsLeafletReady] = React.useState(false);
   const [isMapLoaded, setIsMapLoaded] = React.useState(false);
@@ -21,6 +22,7 @@ export const PlaceMap = ({ lat, lng, name }: PlaceMapProps) => {
   // Robust check for Leaflet availability
   React.useEffect(() => {
     const checkL = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((window as any).L) {
         setIsLeafletReady(true);
         return true;
@@ -46,6 +48,7 @@ export const PlaceMap = ({ lat, lng, name }: PlaceMapProps) => {
 
   React.useEffect(() => {
     if (!isLeafletReady || !mapContainerRef.current || mapRef.current) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const L = (window as any).L;
     if (!L) return;
 
