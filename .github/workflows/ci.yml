@@ -1,26 +1,33 @@
 name: Trip4 Hanoi FE
-run-name: ${{github.action}}
+run-name: ${{ github.action }}
+
 on:
   push:
     branches:
       - master
       - main
       - dev
+    paths:
+      - 'Trip4-HaNoi-Next-js/**'
 
 jobs:
   ci-fe-pipeline:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./Trip4-HaNoi-Next-js
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: './package-lock.json'
+          cache-dependency-path: './Trip4-HaNoi-Next-js/package-lock.json'
 
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
@@ -29,20 +36,32 @@ jobs:
         run: npm run lint
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker hub
-        uses: docker/login-action@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          username: ${{secrets.DOCKER_USERNAME}}
-          password: ${{secrets.DOCKER_PASSWORD}}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./Trip4-HaNoi-Next-js
+          file: ./Trip4-HaNoi-Next-js/Dockerfile
           push: true
+
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+            NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+            NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+            NEXT_PUBLIC_FIREBASE_VAPID_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}
+            NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+
           tags: |
-            ${{secrets.DOCKER_USERNAME}}/trip-4-hanoi-fe:latest
-            ${{secrets.DOCKER_USERNAME}}/frontend-service:${{github.sha}}
+            ${{ secrets.DOCKER_USERNAME }}/frontend-service:latest
+            ${{ secrets.DOCKER_USERNAME }}/frontend-service:${{ github.sha }}
