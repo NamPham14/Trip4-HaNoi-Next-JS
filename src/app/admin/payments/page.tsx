@@ -191,10 +191,10 @@ export default function PaymentManagementPage() {
             { 
               label: "Khách hàng", 
               key: "username", 
-              render: (val: string, item: any) => (
+              render: (val: string) => (
                 <div className="flex flex-col">
                   <span className="font-bold text-gray-900">{val}</span>
-                  <span className="text-xs text-gray-500">{item.email}</span>
+                  <span className="text-xs text-gray-500">{selectedItem?.email}</span>
                 </div>
               ) 
             },
