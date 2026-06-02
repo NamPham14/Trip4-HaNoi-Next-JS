@@ -6,7 +6,7 @@ import { authService } from "@/features/auth/services/auth-api";
  * Custom Axios Instance
  */
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://13.250.31.198:8080/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://api.trip4hanoi.online/api',
   timeout: 15000,
 });
 
