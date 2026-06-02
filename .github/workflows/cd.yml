@@ -5,7 +5,8 @@ on:
     workflows: ["Trip4 Hanoi FE (CI)"]
     types:
       - completed
-
+  
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
