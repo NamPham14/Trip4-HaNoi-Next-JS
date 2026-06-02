@@ -3,7 +3,8 @@ import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from 'js-cookie';
 
-const SOCKET_URL = (process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://api.trip4hanoi.online') + '/ws';
+// const SOCKET_URL = (process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://api.trip4hanoi.online') + '/ws';
+ const SOCKET_URL = 'https://api.trip4hanoi.online/ws';
 
 class SocketService {
   private client: Client | null = null;
