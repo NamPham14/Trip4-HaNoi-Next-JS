@@ -97,5 +97,13 @@ export const eventService = {
   unfollowEvent: async (eventId: number | string): Promise<string> => {
     const response = await axiosInstance.delete<ApiResponse<string>>(`/events/${eventId}/unfollow`);
     return response.data.data;
+  },
+
+  /**
+   * Get followed events
+   */
+  getFollowedEvents: async (): Promise<Event[]> => {
+    const response = await axiosInstance.get<ApiResponse<Event[]>>('/events/followed');
+    return response.data.data;
   }
 };

@@ -38,6 +38,14 @@ const ItineraryMap = ({
   const [isLeafletReady, setIsLeafletReady] = useState(false)
   const { lat: userLat, lng: userLng } = useLocationStore()
 
+  // Effect 1: Check if Leaflet is already loaded on mount (Fixes back button issue)
+  useEffect(() => {
+    if ((window as any).L) {
+      const timer = setTimeout(() => setIsLeafletReady(true), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [])
+
   // Effect: Sync visibility and invalidate map size
   useEffect(() => {
     if (isVisible && mapRef.current) {
@@ -49,12 +57,9 @@ const ItineraryMap = ({
 
   // Handle Leaflet loading via Next/Script callback
   const onLeafletLoad = () => {
-    const checkL = setInterval(() => {
-      if ((window as any).L) {
-        setIsLeafletReady(true)
-        clearInterval(checkL)
-      }
-    }, 100)
+    if ((window as any).L) {
+      setIsLeafletReady(true)
+    }
   }
 
   // Effect 2: Initialize Map
@@ -463,17 +468,22 @@ export default function ItineraryDetailPage() {
                 </div>
 
                 <div className="p-4 md:p-8">
-                  <div className="space-y-12">
+                  <div className="space-y-16">
                     {itinerary.itineraryDays.map((day) => (
-                      <div key={day.dayNumber}>
-                        <div className="flex items-center gap-4 mb-8">
-                          <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-hanoi-red text-white flex items-center justify-center font-bold text-base md:text-lg shadow-lg shadow-hanoi-red/20">
-                            {day.dayNumber}
+                      <div key={day.dayNumber} className="relative">
+                        <div className="flex flex-col mb-10">
+                          <div className="flex items-center gap-4 mb-2">
+                            <span className="text-[10px] font-black text-hanoi-red uppercase tracking-[0.2em]">Kế hoạch cho</span>
+                            <div className="h-px flex-1 bg-zinc-100" />
                           </div>
-                          <h3 className="text-lg md:text-xl font-bold text-zinc-900">
-                            Ngày {day.dayNumber}
-                          </h3>
-                          <div className="h-px flex-1 bg-zinc-100" />
+                          <div className="flex items-baseline gap-3">
+                            <h3 className="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">
+                              Ngày {day.dayNumber}
+                            </h3>
+                            <span className="text-sm md:text-base font-bold text-zinc-400">
+                              • {day.places.length} địa điểm
+                            </span>
+                          </div>
                         </div>
 
                         <div className="ml-4 sm:ml-5 border-l-2 border-dashed border-zinc-100 pl-7 sm:pl-10 space-y-8">
@@ -498,10 +508,17 @@ export default function ItineraryDetailPage() {
                                         variant="secondary"
                                         className="bg-hanoi-red/10 text-hanoi-red border-none font-bold text-[9px] sm:text-[10px] px-2 py-0"
                                       >
-                                        {place.session}
+                                        {place.session === 'Morning' ? 'Buổi Sáng' : 
+                                         place.session === 'Noon' ? 'Buổi Trưa' :
+                                         place.session === 'Afternoon' ? 'Buổi Chiều' : 
+                                         place.session === 'Evening' ? 'Buổi Tối' : place.session}
                                       </Badge>
                                       <span className="text-[9px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1">
-                                        <Clock className="h-3 w-3" /> 2-3h
+                                        <Clock className="h-3 w-3" /> 
+                                        {place.session === 'Morning' ? '08:00 - 11:00' : 
+                                         place.session === 'Noon' ? '11:30 - 13:30' :
+                                         place.session === 'Afternoon' ? '14:00 - 17:00' : 
+                                         place.session === 'Evening' ? '18:30 - 21:30' : '2-3h'}
                                       </span>
                                     </div>
                                     <h4 className="font-bold text-zinc-900 text-sm sm:text-base mb-1 truncate">

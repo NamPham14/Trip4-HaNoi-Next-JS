@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, Share2, Heart, Star, MapPin, Navigation, Loader2 } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
 import { toast } from "sonner";
@@ -16,6 +16,8 @@ interface PlaceHeroProps {
 }
 
 export const PlaceHero = ({ place, isFavorite, isPending, onToggleFavorite }: PlaceHeroProps) => {
+  const router = useRouter();
+
   return (
     <section className="relative h-[35vh] md:h-[50vh] min-h-[280px] md:min-h-[400px] w-full bg-zinc-900">
       <Image
@@ -29,11 +31,12 @@ export const PlaceHero = ({ place, isFavorite, isPending, onToggleFavorite }: Pl
       
       {/* Top Actions */}
       <div className="absolute top-4 md:top-6 left-4 right-4 flex items-center justify-between">
-        <Link href="/explore">
-          <button className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-all">
-            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
-        </Link>
+        <button 
+          onClick={() => router.back()}
+          className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-all"
+        >
+          <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+        </button>
         <div className="flex items-center gap-2">
           <button 
             onClick={() => {

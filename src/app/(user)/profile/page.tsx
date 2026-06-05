@@ -22,10 +22,11 @@ import { ProfileHeader } from "@/features/auth/components/profile/ProfileHeader"
 import { ProfileStats } from "@/features/auth/components/profile/ProfileStats";
 import { ProfileInfoTab } from "@/features/auth/components/profile/ProfileInfoTab";
 import { SecurityTab } from "@/features/auth/components/profile/SecurityTab";
+import { ActivityTab } from "@/features/auth/components/profile/ActivityTab";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useUser();
-  const { data: savedPlaces } = useSavedPlaces();
+  const { data: savedPlaces, isLoading: isPlacesLoading } = useSavedPlaces();
   const { data: myReviews } = useMyReviews(isAuthenticated);
   const { myItineraries } = useItinerary();
   
@@ -80,7 +81,7 @@ export default function ProfilePage() {
                   <Shield className="h-3.5 w-3.5 md:h-5 md:w-5" /> Bảo mật
                 </TabsTrigger>
                 <TabsTrigger value="activity" className="flex-1 md:flex-none rounded-2xl px-4 md:px-10 h-full font-black text-[10px] md:text-base data-[state=active]:bg-zinc-900 data-[state=active]:text-white transition-all flex items-center justify-center gap-2 md:gap-2.5">
-                  <Calendar className="h-3.5 w-3.5 md:h-5 md:w-5" /> Hoạt động
+                  <Bookmark className="h-3.5 w-3.5 md:h-5 md:w-5" /> Hoạt động
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -99,7 +100,7 @@ export default function ProfilePage() {
             </TabsContent>
             
             <TabsContent value="activity">
-              <ActivityPlaceholder />
+              <ActivityTab />
             </TabsContent>
           </Tabs>
         </div>
@@ -130,16 +131,6 @@ const NotAuthenticatedView = () => (
         </Button>
       </Link>
     </div>
-  </div>
-);
-
-const ActivityPlaceholder = () => (
-  <div className="text-center py-32 md:py-48 bg-white rounded-[32px] md:rounded-[48px] border border-dashed border-zinc-200">
-    <div className="w-24 h-24 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-8">
-      <Calendar className="h-12 w-12 text-zinc-200" />
-    </div>
-    <h3 className="text-xl font-black text-zinc-900 mb-2">Chưa có hoạt động</h3>
-    <p className="text-zinc-400 font-medium max-w-xs mx-auto">Mọi hoạt động của bạn sẽ được lưu giữ tại đây.</p>
   </div>
 );
 

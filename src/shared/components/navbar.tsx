@@ -199,13 +199,36 @@ export const Navbar = () => {
         "fixed inset-0 top-0 bg-hanoi-cream z-[90] transition-all duration-500 md:hidden flex flex-col pt-20",
         isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
       )}>
-        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+        <div className="flex-1 overflow-y-auto px-6 pb-10">
           {/* Weather on Mobile Menu */}
           <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700 delay-150">
             <WeatherWidget variant="full" />
           </div>
 
-          <div className="space-y-2">
+          {!isAuthenticated && (
+            <div className="mb-8 space-y-3 animate-in fade-in slide-in-from-top-6 duration-700 delay-300">
+              <div className="p-6 rounded-[32px] bg-white border border-hanoi-gold/20 shadow-xl shadow-hanoi-red/5">
+                <h3 className="text-sm font-black text-hanoi-red uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" /> Bắt đầu hành trình
+                </h3>
+                <div className="grid grid-cols-1 gap-3">
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full h-14 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-2xl shadow-lg shadow-hanoi-red/20 text-base">
+                      Bắt đầu ngay
+                    </Button>
+                  </Link>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full h-14 font-black text-zinc-600 hover:text-hanoi-red hover:bg-hanoi-gold/30 rounded-2xl">
+                      Đăng nhập tài khoản
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-400">
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] ml-4 mb-2 block">Menu Khám Phá</span>
             {[
               { name: "Khám phá địa điểm", href: "/explore", icon: Compass },
               { name: "Lịch trình AI", href: "/planner", icon: Sparkles },
@@ -226,17 +249,6 @@ export const Navbar = () => {
                 </Link>
               )
             ))}
-
-            {!isAuthenticated && (
-              <div className="grid grid-cols-2 gap-3 mt-8">
-                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full h-16 font-black border-hanoi-gold/50 text-hanoi-red rounded-3xl bg-transparent">Đăng nhập</Button>
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full h-16 bg-hanoi-red hover:bg-[#6D1616] text-white font-black rounded-3xl">Bắt đầu ngay</Button>
-                </Link>
-              </div>
-            )}
           </div>
         </div>
         

@@ -62,8 +62,11 @@ export const ChatWidget = () => {
     }
   }
 
-  // Don't show chat widget on admin pages
-  if (pathname?.startsWith('/admin')) {
+  // Don't show chat widget on specific pages or if not authenticated
+  const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register')
+  const isAdminPage = pathname?.startsWith('/admin')
+
+  if (!isAuthenticated || isAuthPage || isAdminPage) {
     return null
   }
 

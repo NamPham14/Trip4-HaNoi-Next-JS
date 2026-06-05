@@ -13,6 +13,17 @@ export const eventKeys = {
   lists: () => [...eventKeys.all, 'list'] as const,
   list: (params: any) => [...eventKeys.lists(), params] as const,
   detail: (id: string | number) => [...eventKeys.all, 'detail', String(id)] as const,
+  followed: () => [...eventKeys.all, 'followed'] as const,
+};
+
+/**
+ * Hook for fetching followed events
+ */
+export const useFollowedEvents = () => {
+  return useQuery({
+    queryKey: eventKeys.followed(),
+    queryFn: () => eventService.getFollowedEvents(),
+  });
 };
 
 /**
