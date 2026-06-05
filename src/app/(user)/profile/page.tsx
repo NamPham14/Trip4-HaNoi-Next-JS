@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Navbar } from "@/shared/components/navbar";
 import { useUser } from "@/features/auth/hooks/use-auth";
 import { useProfileForm } from "@/features/auth/hooks/use-profile-form";
@@ -24,7 +24,7 @@ import { SecurityTab } from "@/features/auth/components/profile/SecurityTab";
 import { ActivityTab } from "@/features/auth/components/profile/ActivityTab";
 import { useSearchParams } from "next/navigation";
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user, isAuthenticated } = useUser();
   const { data: savedPlaces } = useSavedPlaces();
   const { data: myReviews } = useMyReviews(isAuthenticated);
@@ -116,6 +116,19 @@ export default function ProfilePage() {
         />
       )}
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#FDFCFB] flex flex-col items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-hanoi-red" />
+        <p className="mt-4 text-zinc-500 font-bold">Đang tải hồ sơ...</p>
+      </div>
+    }>
+      <ProfilePageContent />
+    </Suspense>
   );
 }
 
