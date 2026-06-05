@@ -12,7 +12,6 @@ import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/shared/components/ui
 import { 
   User as UserIcon, 
   Shield, 
-  Calendar, 
   Check, 
   Loader2, 
   Bookmark
@@ -26,7 +25,7 @@ import { ActivityTab } from "@/features/auth/components/profile/ActivityTab";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useUser();
-  const { data: savedPlaces, isLoading: isPlacesLoading } = useSavedPlaces();
+  const { data: savedPlaces } = useSavedPlaces();
   const { data: myReviews } = useMyReviews(isAuthenticated);
   const { myItineraries } = useItinerary();
   

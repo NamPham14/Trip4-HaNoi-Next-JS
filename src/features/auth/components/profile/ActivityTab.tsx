@@ -3,14 +3,21 @@
 import React, { useState } from "react";
 import { useSavedPlaces } from "@/features/places/hooks/use-places";
 import { useFollowedEvents } from "@/features/events/hooks/use-events";
-import { MapPin, Calendar, LayoutGrid, ListFilter, Search, BookmarkX } from "lucide-react";
+import { MapPin, Calendar, LayoutGrid, Search, BookmarkX } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { Badge } from "@/shared/components/ui/button"; // Reusing button as badge or similar
 import { PlaceCard } from "@/features/places/components/place-card";
 import { EventCard } from "@/features/events/components/event-card";
 import { Loader2 } from "lucide-react";
 
 type FilterType = "all" | "places" | "events";
+
+interface FilterChipProps {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+}
 
 export const ActivityTab = () => {
   const [filter, setFilter] = useState<FilterType>("all");
@@ -107,7 +114,7 @@ export const ActivityTab = () => {
   );
 };
 
-const FilterChip = ({ label, count, active, onClick, icon }: any) => (
+const FilterChip = ({ label, count, active, onClick, icon }: FilterChipProps) => (
   <button
     onClick={onClick}
     className={cn(

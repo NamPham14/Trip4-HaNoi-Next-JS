@@ -18,6 +18,7 @@ import {
 import { Button } from '@/shared/components/ui/button'
 import { Badge } from '@/shared/components/ui/badge'
 import Link from 'next/link'
+import Image from 'next/image'
 import Script from 'next/script'
 import { cn } from '@/shared/lib/utils'
 
@@ -406,12 +407,13 @@ export default function ItineraryDetailPage() {
           >
             <div className="bg-white rounded-[32px] shadow-xl overflow-hidden border border-zinc-100">
               <div className="relative text-white">
-                {itinerary.coverImage && (
+                    {itinerary.coverImage && (
                   <div className="absolute inset-0 z-0">
-                    <img
+                    <Image
                       src={itinerary.coverImage}
                       className="w-full h-full object-cover"
                       alt="Cover"
+                      fill
                     />
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
                   </div>
@@ -487,18 +489,19 @@ export default function ItineraryDetailPage() {
                         </div>
 
                         <div className="ml-4 sm:ml-5 border-l-2 border-dashed border-zinc-100 pl-7 sm:pl-10 space-y-8">
-                          {day.places.map((place, idx) => (
+                          {day.places.map((place) => (
                             <div key={place.id} className="relative group">
                               <div className="absolute -left-[41px] sm:-left-[51px] top-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white border-4 border-hanoi-red group-hover:scale-125 transition-transform" />
 
                               <div className="bg-zinc-50 rounded-2xl p-4 sm:p-5 border border-zinc-100 hover:bg-white hover:shadow-xl hover:border-hanoi-gold/30 transition-all duration-300">
                                 <div className="flex gap-4 sm:gap-5">
                                   {place.imageUrl && (
-                                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border border-zinc-200 shadow-sm">
-                                      <img
+                                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border border-zinc-200 shadow-sm">
+                                      <Image
                                         src={place.imageUrl}
                                         alt={place.placeName}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        className="object-cover"
                                       />
                                     </div>
                                   )}
