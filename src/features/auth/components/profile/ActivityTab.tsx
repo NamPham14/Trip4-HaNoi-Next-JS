@@ -28,15 +28,15 @@ export const ActivityTab = () => {
 
   const isLoading = isPlacesLoading || isEventsLoading;
 
-  // Filter logic
+  // Filter logic with safety checks
   const filteredPlaces = (savedPlaces || []).filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.address.toLowerCase().includes(searchQuery.toLowerCase())
+    (p.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
+    (p.address?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
   const filteredEvents = (followedEvents || []).filter(e => 
-    e.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    e.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    (e.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
+    (e.description?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
   const totalItems = (filter === "all" || filter === "places" ? filteredPlaces.length : 0) + 
