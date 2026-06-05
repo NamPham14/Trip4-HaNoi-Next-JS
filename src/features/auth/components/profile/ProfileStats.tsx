@@ -14,7 +14,7 @@ export const ProfileStats = ({ itinerariesCount, savedPlacesCount, reviewsCount 
         <p className="text-2xl md:text-4xl font-black text-zinc-900 group-hover:text-hanoi-red transition-colors">{itinerariesCount}</p>
         <p className="text-[10px] md:text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-2">Lịch trình</p>
       </Link>
-      <Link href="/saved-places" className="text-center group border-x border-zinc-100/80 transition-all active:scale-95">
+      <Link href="/profile?tab=activity" className="text-center group border-x border-zinc-100/80 transition-all active:scale-95">
         <p className="text-2xl md:text-4xl font-black text-zinc-900 group-hover:text-hanoi-red transition-colors">{savedPlacesCount}</p>
         <p className="text-[10px] md:text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-2">Yêu thích</p>
       </Link>

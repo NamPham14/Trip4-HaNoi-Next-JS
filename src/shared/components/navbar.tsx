@@ -152,7 +152,7 @@ export const Navbar = () => {
                       Lịch trình của tôi
                     </DropdownMenuItem>
                   </Link>
-                  <Link href="/saved-places">
+                  <Link href="/profile?tab=activity">
                     <DropdownMenuItem className="rounded-2xl px-4 py-3 font-bold text-zinc-600 hover:text-hanoi-red cursor-pointer focus:bg-hanoi-gold/40 transition-colors">
                       <Heart className="mr-3 h-4 w-4" />
                       Địa điểm đã lưu

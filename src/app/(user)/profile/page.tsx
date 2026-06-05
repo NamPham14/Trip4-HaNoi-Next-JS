@@ -22,12 +22,15 @@ import { ProfileStats } from "@/features/auth/components/profile/ProfileStats";
 import { ProfileInfoTab } from "@/features/auth/components/profile/ProfileInfoTab";
 import { SecurityTab } from "@/features/auth/components/profile/SecurityTab";
 import { ActivityTab } from "@/features/auth/components/profile/ActivityTab";
+import { useSearchParams } from "next/navigation";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useUser();
   const { data: savedPlaces } = useSavedPlaces();
   const { data: myReviews } = useMyReviews(isAuthenticated);
   const { myItineraries } = useItinerary();
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "info";
   
   const {
     isEditing,
@@ -70,7 +73,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="px-4 md:px-0">
-          <Tabs defaultValue="info" className="w-full">
+          <Tabs defaultValue={defaultTab} className="w-full">
             <div className="flex justify-center w-full">
               <TabsList className="bg-white p-1.5 rounded-[24px] border border-zinc-100 mb-6 md:mb-10 h-14 md:h-18 flex items-center justify-center w-full md:w-max shadow-sm">
                 <TabsTrigger value="info" className="flex-1 md:flex-none rounded-2xl px-4 md:px-10 h-full font-black text-[10px] md:text-base data-[state=active]:bg-zinc-900 data-[state=active]:text-white transition-all flex items-center justify-center gap-2 md:gap-2.5">
