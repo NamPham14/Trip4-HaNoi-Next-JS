@@ -38,7 +38,7 @@ export default function HomePage() {
         {/* Background Image with Cinematic Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000&auto=format&fit=crop"
+            src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi.jpg.webp"
             alt="Hanoi Ancient Street"
             className="w-full h-full object-cover scale-105 animate-slow-zoom"
           />
@@ -222,24 +222,24 @@ export default function HomePage() {
             <div className="grid grid-cols-2 gap-4 relative">
               <div className="space-y-4 pt-12">
                 <img
-                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=600&fit=crop"
+                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-21.jpg.webp"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
                 <img
-                  src="https://images.unsplash.com/photo-1555921015-5532091f6026?w=400&h=400&fit=crop"
+                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-18.jpg.webp"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
               </div>
               <div className="space-y-4">
                 <img
-                  src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=400&fit=crop"
+                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-14.jpg.webp"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
                 <img
-                  src="https://images.unsplash.com/photo-1562307534-a03738d2a81a?w=400&h=600&fit=crop"
+                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-10.jpg.webp"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
