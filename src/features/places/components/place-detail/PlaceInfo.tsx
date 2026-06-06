@@ -18,9 +18,12 @@ export const PlaceInfo = ({ place }: PlaceInfoProps) => {
           <Info className="h-6 w-6 text-hanoi-red" />
           Giới thiệu
         </h2>
-        <p className="text-zinc-600 leading-relaxed whitespace-pre-line text-lg">
-          {place.description || "Chưa có mô tả chi tiết cho địa điểm này."}
-        </p>
+        <div 
+          className="text-zinc-600 leading-relaxed text-lg"
+          dangerouslySetInnerHTML={{ 
+            __html: place.description || "Chưa có mô tả chi tiết cho địa điểm này." 
+          }} 
+        />
       </section>
 
       {/* Image Album */}
