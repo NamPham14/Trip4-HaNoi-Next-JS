@@ -40,10 +40,9 @@ export default function HomePage() {
           <img
             src="https://i.pinimg.com/1200x/e5/33/c0/e533c05900ae9488b5873dd3a923a06f.jpg"
             alt="Hanoi Ancient Street"
-            className="w-full h-full object-cover scale-105 animate-slow-zoom"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-hanoi-cream" />
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-hanoi-cream" />
         </div>
 
         <div className="container mx-auto relative z-10 text-center">

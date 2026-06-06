@@ -473,16 +473,18 @@ export default function ItineraryDetailPage() {
                   <div className="space-y-16">
                     {itinerary.itineraryDays.map((day) => (
                       <div key={day.dayNumber} className="relative">
-                        <div className="flex flex-col mb-10">
-                          <div className="flex items-center gap-4 mb-2">
-                            <span className="text-[10px] font-black text-hanoi-red uppercase tracking-[0.2em]">Kế hoạch cho</span>
-                            <div className="h-px flex-1 bg-zinc-100" />
+                        <div className="flex flex-col mb-10 bg-zinc-900 p-6 md:p-8 rounded-[24px] text-white shadow-xl shadow-zinc-200/50">
+                          <div className="flex items-center gap-4 mb-3">
+                            <span className="text-[10px] font-black text-hanoi-gold uppercase tracking-[0.2em]">
+                              Kế hoạch cho
+                            </span>
+                            <div className="h-px flex-1 bg-white/10" />
                           </div>
                           <div className="flex items-baseline gap-3">
-                            <h3 className="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">
+                            <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight">
                               Ngày {day.dayNumber}
                             </h3>
-                            <span className="text-sm md:text-base font-bold text-zinc-400">
+                            <span className="text-sm md:text-base font-bold text-white/50">
                               • {day.places.length} địa điểm
                             </span>
                           </div>
