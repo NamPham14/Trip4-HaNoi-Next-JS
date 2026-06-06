@@ -29,16 +29,16 @@ export const PlaceCard = ({ place, className }: PlaceCardProps) => {
         
         {/* Image Section */}
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
-          <Image
+          <img
             src={mainImage}
             alt={place.name}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
             onError={(e) => {
-              // Nếu ảnh lỗi, thay bằng ảnh placeholder ngay lập tức
               const target = e.target as HTMLImageElement;
-              target.src = "https://images.unsplash.com/photo-1441260038675-7329ab4cc264?q=80&w=800";
+              if (!target.src.includes('photo-1441260038675')) {
+                target.src = "https://images.unsplash.com/photo-1441260038675-7329ab4cc264?q=80&w=800";
+              }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
