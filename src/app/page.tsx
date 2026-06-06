@@ -38,7 +38,7 @@ export default function HomePage() {
         {/* Background Image with Cinematic Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi.jpg.webp"
+            src="https://i.pinimg.com/1200x/e5/33/c0/e533c05900ae9488b5873dd3a923a06f.jpg"
             alt="Hanoi Ancient Street"
             className="w-full h-full object-cover scale-105 animate-slow-zoom"
           />
@@ -199,11 +199,11 @@ export default function HomePage() {
                   </p>
                   <div className="flex items-center gap-4 mt-6">
                     <div className="h-12 w-12 bg-hanoi-red rounded-full overflow-hidden border-2 border-white shadow-lg">
-                      <img src="https://i.pravatar.cc/150?u=1" alt="" />
+                      <img src="https://media.vov.vn/sites/default/files/styles/large/public/2026-05/S%C6%A1n%20T%C3%B9ng%20MTP.png.jpg" alt="" />
                     </div>
                     <div>
                       <p className="font-black text-zinc-900 text-sm">
-                        Minh Anh
+                        Sơn Tùng MTP
                       </p>
                       <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">
                         Travel Enthusiast
@@ -222,24 +222,24 @@ export default function HomePage() {
             <div className="grid grid-cols-2 gap-4 relative">
               <div className="space-y-4 pt-12">
                 <img
-                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-21.jpg.webp"
+                  src="https://i.pinimg.com/736x/d5/0b/3f/d50b3fb4f85ccf17708f5bf4a631f51b.jpg"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
                 <img
-                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-18.jpg.webp"
+                  src="https://i.pinimg.com/1200x/16/cb/9a/16cb9a8ad5f51ff604832417b54fc8c8.jpg"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
               </div>
               <div className="space-y-4">
                 <img
-                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-14.jpg.webp"
+                  src="https://i.pinimg.com/736x/9e/99/95/9e999588218c9a8ca3c12cf6f7ee52f8.jpg"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
                 <img
-                  src="https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/04/anh-ha-noi-10.jpg.webp"
+                  src="https://i.pinimg.com/736x/73/ce/80/73ce80d6bec0e83b675000d650a625c6.jpg"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                   alt=""
                 />
