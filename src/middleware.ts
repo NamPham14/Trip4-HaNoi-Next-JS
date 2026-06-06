@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Protected routes that require login
-const protectedRoutes = ['/admin', '/profile', '/planner', '/my-itineraries', '/saved-places'];
+const protectedRoutes = ['/admin', '/profile', '/planner', '/my-itineraries', '/favorites'];
 // Routes that should NOT be accessible if already logged in
 const publicOnlyRoutes = ['/login', '/register'];
 

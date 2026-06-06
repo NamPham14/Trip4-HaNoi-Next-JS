@@ -130,7 +130,7 @@ export const ProfileInfoTab = ({ user, isEditing, formData, setFormData }: Profi
                 <ChevronRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
               </Button>
             </Link>
-            <Link href="/saved-places" className="block">
+            <Link href="/favorites" className="block">
               <Button variant="ghost" className="w-full justify-between font-black text-zinc-600 hover:text-hanoi-red hover:bg-hanoi-red/5 rounded-2xl h-14 md:h-16 px-5 transition-all group">
                 <span className="flex items-center gap-3 text-base">
                   <Heart className="h-5 w-5" /> Yêu thích

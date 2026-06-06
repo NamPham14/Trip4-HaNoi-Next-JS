@@ -6,6 +6,7 @@ import { Navbar } from "@/shared/components/navbar";
 import { useUser } from "@/features/auth/hooks/use-auth";
 import { useProfileForm } from "@/features/auth/hooks/use-profile-form";
 import { useMyReviews, useSavedPlaces } from "@/features/places/hooks/use-places";
+import { useFollowedEvents } from "@/features/events/hooks/use-events";
 import { useItinerary } from "@/features/itinerary/hooks/use-itinerary";
 import { Button } from "@/shared/components/ui/button";
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/shared/components/ui/tabs";
@@ -27,6 +28,7 @@ import { useSearchParams } from "next/navigation";
 function ProfilePageContent() {
   const { user, isAuthenticated } = useUser();
   const { data: savedPlaces } = useSavedPlaces();
+  const { data: followedEvents } = useFollowedEvents();
   const { data: myReviews } = useMyReviews(isAuthenticated);
   const { myItineraries } = useItinerary();
   const searchParams = useSearchParams();
@@ -67,7 +69,7 @@ function ProfilePageContent() {
           />
           <ProfileStats 
             itinerariesCount={myItineraries.length}
-            savedPlacesCount={savedPlaces?.length || 0}
+            savedPlacesCount={(savedPlaces?.length || 0) + (followedEvents?.length || 0)}
             reviewsCount={myReviews?.length || 0}
           />
         </div>

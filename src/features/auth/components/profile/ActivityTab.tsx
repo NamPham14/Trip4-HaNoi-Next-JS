@@ -29,10 +29,13 @@ export const ActivityTab = () => {
   const isLoading = isPlacesLoading || isEventsLoading;
 
   // Filter logic with safety checks
-  const filteredPlaces = (savedPlaces || []).filter(p => 
-    (p.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
-    (p.address?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-  );
+  const filteredPlaces = (savedPlaces || [])
+    .filter(item => !!item.place)
+    .filter(item => {
+      const p = item.place;
+      return (p.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
+             (p.address?.toLowerCase() || "").includes(searchQuery.toLowerCase());
+    });
 
   const filteredEvents = (followedEvents || []).filter(e => 
     (e.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
@@ -96,9 +99,9 @@ export const ActivityTab = () => {
       {/* Grid Content */}
       {totalItems > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {(filter === "all" || filter === "places") && filteredPlaces.map(place => (
-            <div key={`place-${place.id}`} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <PlaceCard place={place} />
+          {(filter === "all" || filter === "places") && filteredPlaces.map(item => (
+            <div key={`place-${item.id}`} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <PlaceCard place={item.place} />
             </div>
           ))}
           {(filter === "all" || filter === "events") && filteredEvents.map(event => (
