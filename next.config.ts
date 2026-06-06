@@ -117,6 +117,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'product.hstatic.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'iguov8nhvyobj.vcdn.cloud',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.xanhsm.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.vinwonders.com',
+      },
     ],
   },
 };
