@@ -54,7 +54,7 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-none animate-fade-in">
             Khám phá Hà Nội <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hanoi-gold via-white to-hanoi-gold bg-300% animate-gradient-text">
-              Theo Cách Riêng
+              cùng Trip4Hanoi
             </span>
           </h1>
 
