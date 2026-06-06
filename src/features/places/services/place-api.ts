@@ -126,5 +126,13 @@ export const placeService = {
 
   deleteReview: async (reviewId: number): Promise<void> => {
     await axiosInstance.delete(`/reviews/${reviewId}`);
+  },
+
+  /**
+   * Get all unique districts from the database
+   */
+  getDistricts: async (): Promise<string[]> => {
+    const response = await axiosInstance.get<ApiResponse<string[]>>('/places/districts');
+    return response.data.data;
   }
 };

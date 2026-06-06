@@ -17,17 +17,15 @@ import { toast } from 'sonner';
 import { Label } from '@/shared/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { PlaceForm } from '@/features/places/components/PlaceForm';
+import { Dialog, DialogContent, DialogTitle } from '@/shared/components/ui/dialog';
 
-// Districts in Hanoi
-const DISTRICTS = [
-  "Ba Đình", "Hoàn Kiếm", "Tây Hồ", "Long Biên", "Cầu Giấy", "Đống Đa", 
-  "Hai Bà Trưng", "Hoàng Mai", "Thanh Xuân", "Nam Từ Liêm", "Bắc Từ Liêm", "Hà Đông"
-];
+// Dynamic districts will be fetched from backend
 
 export default function PlaceManagementPage() {
   // Data State
   const [places, setPlaces] = useState<Place[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [districts, setDistricts] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('all');
@@ -43,6 +41,7 @@ export default function PlaceManagementPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [currentPlace, setCurrentPlace] = useState<Place | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   const fetchPlaces = useCallback(async () => {
@@ -72,6 +71,7 @@ export default function PlaceManagementPage() {
 
   useEffect(() => {
     categoryService.getAllCategories({size: 100}).then(data => setCategories(data.data));
+    placeService.getDistricts().then(data => setDistricts(data));
   }, []);
 
   const handleFormSuccess = () => {
@@ -85,6 +85,24 @@ export default function PlaceManagementPage() {
   };
 
   const columns: ColumnDef<Place>[] = [
+    {
+      id: "image",
+      header: "Ảnh",
+      cell: ({ row }) => {
+        const imageUrl = row.original.images?.[0]?.imageUrl || "https://images.unsplash.com/photo-1501233321112-999aa1234567?q=80&w=800";
+        return (
+          <div 
+            className="w-12 h-12 rounded-lg overflow-hidden border border-gray-100 cursor-zoom-in group relative"
+            onClick={() => setSelectedImage(imageUrl)}
+          >
+            <img src={imageUrl} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Search size={14} className="text-white" />
+            </div>
+          </div>
+        );
+      }
+    },
     {
       accessorKey: "name",
       header: "Địa điểm",
@@ -180,7 +198,7 @@ export default function PlaceManagementPage() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all" className="font-bold text-primary">Tất cả quận</SelectItem>
-                        {DISTRICTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                        {districts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
@@ -205,6 +223,28 @@ export default function PlaceManagementPage() {
       </div>
 
       <DataTable columns={columns} data={places} pageCount={pageCount} pageIndex={pageIndex} onPageChange={setPageIndex} isLoading={loading} />
+
+      {/* Image Zoom Modal */}
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-3xl p-1 bg-transparent border-none shadow-none sm:max-w-4xl">
+          <DialogTitle className="sr-only">Phóng to ảnh</DialogTitle>
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-zinc-900/50 backdrop-blur-xl">
+             <img 
+               src={selectedImage || ""} 
+               alt="Zoomed" 
+               className="w-full h-full object-contain"
+             />
+             <Button 
+                variant="secondary" 
+                size="icon" 
+                className="absolute top-4 right-4 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md border-none text-white"
+                onClick={() => setSelectedImage(null)}
+             >
+                <Plus className="rotate-45" />
+             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Detail Modal */}
       <DetailModal 
