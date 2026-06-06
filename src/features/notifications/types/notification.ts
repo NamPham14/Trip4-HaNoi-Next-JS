@@ -1,6 +1,8 @@
 export interface Notification {
   id: number;
+  title?: string;
   message: string;
+  type?: string;
   targetUrl?: string;
   status: 'READ' | 'UNREAD';
   createdAt: string;

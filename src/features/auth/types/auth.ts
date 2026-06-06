@@ -9,6 +9,13 @@ export interface User {
   status: 'ACTIVE' | 'INACTIVE' | 'BANNED';
   isLocationTrackingEnabled: boolean;
   createdAt?: string;
+  subscription?: Subscription;
+}
+
+export interface Subscription {
+  planType: string;
+  endDate: string;
+  isActive: boolean;
 }
 
 export interface Role {

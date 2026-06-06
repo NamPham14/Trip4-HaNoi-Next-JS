@@ -7,6 +7,7 @@ import { paymentApi } from '../services/payment-api';
 import { PlanType } from '../types';
 import { toast } from 'sonner';
 import { cn } from '@/shared/lib/utils';
+import { useMyInfo } from '@/features/auth/hooks/use-auth';
 
 const PRICING_PLANS = [
   {
@@ -59,6 +60,10 @@ const PRICING_PLANS = [
 
 export const PricingSection = () => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const { data: user } = useMyInfo();
+
+  const currentPlan = user?.subscription?.planType;
+  const isSubscriptionActive = user?.subscription?.isActive;
 
   const handleSubscribe = async (packageType: string) => {
     if (packageType === 'SUPER_VIP') return;
@@ -89,82 +94,102 @@ export const PricingSection = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {PRICING_PLANS.map((plan) => (
-            <div
-              key={plan.id}
-              className={cn(
-                "relative bg-white rounded-3xl p-8 transition-all duration-300 border-2 flex flex-col",
-                plan.popular 
-                  ? "border-orange-500 shadow-2xl scale-105 z-10 pt-12" 
-                  : "border-zinc-100 shadow-xl hover:border-zinc-200",
-                plan.isComingSoon && "opacity-80 grayscale-[0.5] pt-12"
-              )}
-            >
-              {plan.popular && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-2 whitespace-nowrap">
-                  <ShieldCheck className="w-3 h-3" />
-                  ĐƯỢC CHỌN NHIỀU NHẤT
-                </div>
-              )}
-
-              {plan.isComingSoon && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-zinc-800 text-white px-6 py-1 rounded-full text-[10px] font-bold shadow-lg whitespace-nowrap">
-                  SẮP RA MẮT
-                </div>
-              )}
-
-              <div className="flex items-center gap-3 mb-6">
-                <div className={cn(
-                  "p-3 rounded-2xl",
-                  plan.id === PlanType.PRO_3_MONTH ? "bg-orange-50" : 
-                  plan.id === 'SUPER_VIP' ? "bg-yellow-50" : "bg-blue-50"
-                )}>
-                  {plan.icon}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-zinc-900">{plan.name}</h3>
-                  <p className="text-sm text-zinc-500">{plan.description}</p>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-zinc-900">{plan.price}</span>
-                  <span className="text-xl font-semibold text-zinc-500">VNĐ</span>
-                </div>
-              </div>
-
-              <ul className="space-y-4 mb-8 flex-1">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3 text-zinc-600 text-sm">
-                    <div className="mt-1 bg-green-100 rounded-full p-0.5 shrink-0">
-                      <Check className="w-4 h-4 text-green-600" />
-                    </div>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => handleSubscribe(plan.id)}
-                disabled={loadingId !== null || plan.isComingSoon}
+          {PRICING_PLANS.map((plan) => {
+            const isCurrentPlan = currentPlan === plan.id && isSubscriptionActive;
+            
+            return (
+              <div
+                key={plan.id}
                 className={cn(
-                  "w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2",
-                  plan.id === PlanType.PRO_3_MONTH
-                    ? "bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-200"
-                    : plan.isComingSoon
-                    ? "bg-zinc-200 text-zinc-500 cursor-not-allowed"
-                    : "bg-zinc-900 text-white hover:bg-zinc-800"
+                  "relative bg-white rounded-3xl p-8 transition-all duration-300 border-2 flex flex-col",
+                  plan.popular 
+                    ? "border-orange-500 shadow-2xl scale-105 z-10 pt-12" 
+                    : "border-zinc-100 shadow-xl hover:border-zinc-200",
+                  plan.isComingSoon && "opacity-80 grayscale-[0.5] pt-12",
+                  isCurrentPlan && "border-green-500 shadow-green-100 pt-12"
                 )}
               >
-                {loadingId === plan.id ? (
-                  <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  plan.buttonText
+                {plan.popular && !isCurrentPlan && (
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-2 whitespace-nowrap">
+                    <ShieldCheck className="w-3 h-3" />
+                    ĐƯỢC CHỌN NHIỀU NHẤT
+                  </div>
                 )}
-              </button>
-            </div>
-          ))}
+
+                {isCurrentPlan && (
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-2 whitespace-nowrap">
+                    <ShieldCheck className="w-3 h-3" />
+                    GÓI ĐANG SỬ DỤNG
+                  </div>
+                )}
+
+                {plan.isComingSoon && (
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-zinc-800 text-white px-6 py-1 rounded-full text-[10px] font-bold shadow-lg whitespace-nowrap">
+                    SẮP RA MẮT
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 mb-6">
+                  <div className={cn(
+                    "p-3 rounded-2xl",
+                    plan.id === PlanType.PRO_3_MONTH ? "bg-orange-50" : 
+                    plan.id === 'SUPER_VIP' ? "bg-yellow-50" : 
+                    isCurrentPlan ? "bg-green-50" : "bg-blue-50"
+                  )}>
+                    {isCurrentPlan ? <ShieldCheck className="w-6 h-6 text-green-600" /> : plan.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-zinc-900">{plan.name}</h3>
+                    <p className="text-sm text-zinc-500">{plan.description}</p>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-zinc-900">{plan.price}</span>
+                    <span className="text-xl font-semibold text-zinc-500">VNĐ</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-4 mb-8 flex-1">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3 text-zinc-600 text-sm">
+                      <div className="mt-1 bg-green-100 rounded-full p-0.5 shrink-0">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={loadingId !== null || plan.isComingSoon || isCurrentPlan}
+                  className={cn(
+                    "w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2",
+                    isCurrentPlan
+                      ? "bg-green-500 text-white cursor-default"
+                      : plan.id === PlanType.PRO_3_MONTH
+                      ? "bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-200"
+                      : plan.isComingSoon
+                      ? "bg-zinc-200 text-zinc-500 cursor-not-allowed"
+                      : "bg-zinc-900 text-white hover:bg-zinc-800"
+                  )}
+                >
+                  {loadingId === plan.id ? (
+                    <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : isCurrentPlan ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      Đang sử dụng
+                    </>
+                  ) : (
+                    plan.buttonText
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <div className="mt-16 text-center text-zinc-500 max-w-2xl mx-auto">

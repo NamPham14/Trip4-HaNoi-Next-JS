@@ -1,5 +1,5 @@
 import React from "react";
-import { Bell, Eye } from "lucide-react";
+import { Bell, Eye, MessageSquare, CreditCard, ShieldAlert, Star, Calendar, Zap } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { DropdownMenuItem } from "@/shared/components/ui/dropdown-menu";
 import { Notification } from "../types/notification";
@@ -12,6 +12,20 @@ interface NotificationItemProps {
   notification: Notification;
   onMarkAsRead: (id: number) => void;
 }
+
+// Helper to get icon based on type
+const getNotificationIcon = (type: string | undefined, isUnread: boolean) => {
+  const iconClass = "h-5 w-5";
+  switch (type) {
+    case 'CHAT': return <MessageSquare className={iconClass} />;
+    case 'PAYMENT': return <CreditCard className={iconClass} />;
+    case 'ALERT': return <ShieldAlert className={iconClass} />;
+    case 'SOCIAL': return <Star className={iconClass} />;
+    case 'REMINDER': return <Calendar className={iconClass} />;
+    case 'NEWSLETTER': return <Zap className={iconClass} />;
+    default: return <Bell className={iconClass} />;
+  }
+};
 
 // Helper function to format time
 const formatTimeAgo = (dateString: string) => {
@@ -44,7 +58,8 @@ export const NotificationItem = ({ notification: n, onMarkAsRead }: Notification
     }
     
     // Kiểm tra xem đây có phải là thông báo Chat không (ngay cả khi targetUrl bị null)
-    const isChatNotification = n.targetUrl?.includes('#chat') || 
+    const isChatNotification = n.type === 'CHAT' || 
+                               n.targetUrl?.includes('#chat') || 
                                n.message.toLowerCase().includes('đã trả lời tin nhắn');
 
     if (isChatNotification) {
@@ -70,7 +85,7 @@ export const NotificationItem = ({ notification: n, onMarkAsRead }: Notification
     <DropdownMenuItem 
       className={cn(
         "rounded-2xl p-3 mb-1 cursor-pointer focus:bg-hanoi-gold/40 flex flex-col gap-2 transition-colors",
-        n.status === 'UNREAD' ? "bg-hanoi-gold/10" : "opacity-70"
+        n.status === 'UNREAD' ? "bg-hanoi-gold/5" : "opacity-70"
       )}
       onSelect={handleAction}
     >
@@ -79,12 +94,20 @@ export const NotificationItem = ({ notification: n, onMarkAsRead }: Notification
           "h-10 w-10 rounded-xl flex items-center justify-center shrink-0",
           n.status === 'UNREAD' ? "bg-hanoi-red/10 text-hanoi-red" : "bg-zinc-100 text-zinc-400"
         )}>
-          <Bell className="h-5 w-5" />
+          {getNotificationIcon(n.type, n.status === 'UNREAD')}
         </div>
         <div className="flex flex-col gap-0.5 flex-1 overflow-hidden">
+          {n.title && (
+            <span className={cn(
+              "text-xs font-black uppercase tracking-wider",
+              n.status === 'UNREAD' ? "text-hanoi-red" : "text-zinc-400"
+            )}>
+              {n.title}
+            </span>
+          )}
           <span className={cn(
             "text-sm leading-tight break-words",
-            n.status === 'UNREAD' ? "font-black text-zinc-900" : "font-bold text-zinc-500"
+            n.status === 'UNREAD' ? "font-bold text-zinc-900" : "font-medium text-zinc-500"
           )}>
             {n.message}
           </span>
