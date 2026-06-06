@@ -48,6 +48,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: [
+      { url: '/icon.jpg', type: 'image/jpeg' },
+    ],
+    apple: [
+      { url: '/icon.jpg', sizes: '180x180', type: 'image/jpeg' },
+    ],
+  },
 }
 
 export default function RootLayout({children} :{children :React.ReactNode}) {
