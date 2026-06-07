@@ -16,12 +16,6 @@ import { Category } from '@/features/category/services/category-api'
 import { placeService } from '@/features/places/services/place-api'
 import { toast } from 'sonner'
 
-// Districts in Hanoi
-const DISTRICTS = [
-  "Ba Đình", "Hoàn Kiếm", "Tây Hồ", "Long Biên", "Cầu Giấy", "Đống Đa", 
-  "Hai Bà Trưng", "Hoàng Mai", "Thanh Xuân", "Nam Từ Liêm", "Bắc Từ Liêm", "Hà Đông"
-];
-
 // Validation Schema
 const placeSchema = z.object({
   name: z.string().min(3, "Tên địa điểm ít nhất 3 ký tự"),
@@ -39,6 +33,7 @@ type PlaceFormData = z.infer<typeof placeSchema>;
 interface PlaceFormProps {
   currentPlace: Place | null
   categories: Category[]
+  districts: string[]
   onSuccess: () => void
   onCancel: () => void
 }
@@ -46,6 +41,7 @@ interface PlaceFormProps {
 export const PlaceForm: React.FC<PlaceFormProps> = ({
   currentPlace,
   categories,
+  districts,
   onSuccess,
   onCancel,
 }) => {
@@ -142,7 +138,7 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
                 <Select onValueChange={field.onChange} value={field.value} disabled={formLoading}>
                 <SelectTrigger><SelectValue placeholder="Chọn..." /></SelectTrigger>
                 <SelectContent>
-                    {DISTRICTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    {districts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
                 </Select>
             )}

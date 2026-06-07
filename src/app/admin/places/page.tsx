@@ -280,6 +280,7 @@ export default function PlaceManagementPage() {
           key={currentPlace?.id || 'new'}
           currentPlace={currentPlace} 
           categories={categories} 
+          districts={districts}
           onSuccess={handleFormSuccess} 
           onCancel={() => setIsFormOpen(false)} 
         />
