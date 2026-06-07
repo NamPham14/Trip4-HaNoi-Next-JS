@@ -178,13 +178,13 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
         <div className="grid grid-cols-4 gap-2">
             {currentPlace?.images?.filter(img => keepImageIds.includes(img.id)).map(img => (
                 <div key={img.id} className="relative aspect-square border rounded overflow-hidden">
-                    <img src={img.imageUrl} className="w-full h-full object-cover" />
+                    <img src={img.imageUrl} alt="Place" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => setKeepImageIds(prev => prev.filter(id => id !== img.id))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
                 </div>
             ))}
             {selectedImages.map((file, idx) => (
                 <div key={idx} className="relative aspect-square border rounded overflow-hidden">
-                    <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                    <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
                 </div>
             ))}

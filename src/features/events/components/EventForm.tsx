@@ -9,7 +9,6 @@ import { ImageIcon, X, Loader2 } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select'
 import { RichTextEditor } from '@/shared/components/RichTextEditor'
 import { Event } from '@/features/events/types/event'
 import { Place } from '@/features/places/types/place'
@@ -152,13 +151,13 @@ export const EventForm: React.FC<EventFormProps> = ({
         <div className="grid grid-cols-4 gap-2">
             {selectedEvent?.images?.filter(img => keepImageIds.includes(img.id)).map(img => (
                 <div key={img.id} className="relative aspect-square border rounded overflow-hidden">
-                    <img src={img.imageUrl} className="w-full h-full object-cover" />
+                    <img src={img.imageUrl} alt="Event" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => setKeepImageIds(prev => prev.filter(id => id !== img.id))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
                 </div>
             ))}
             {selectedImages.map((file, idx) => (
                 <div key={idx} className="relative aspect-square border rounded overflow-hidden">
-                    <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                    <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"><X size={10} /></button>
                 </div>
             ))}

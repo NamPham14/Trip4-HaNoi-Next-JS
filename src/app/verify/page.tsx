@@ -1,32 +1,27 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle, XCircle, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import { authService } from "@/features/auth/services/auth-api";
 import Link from "next/link";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const token = searchParams.get("token");
   
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setMessage("Mã xác thực không hợp lệ hoặc đã hết hạn.");
-      return;
-    }
-
     const verify = async () => {
+      if (!token) {
+        setStatus("error");
+        setMessage("Mã xác thực không hợp lệ hoặc đã hết hạn.");
+        return;
+      }
+
       try {
-        // Gọi API xác thực từ Backend
-        // Chú ý: Backend xử lý GET /api/auth/verify?token=...
-        // Chúng ta sử dụng axiosInstance (đã có baseURL /api) nên chỉ cần /auth/verify
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.trip4hanoi.online/api'}/auth/verify?token=${token}`);
         
         if (response.ok) {
@@ -37,7 +32,7 @@ function VerifyContent() {
           setStatus("error");
           setMessage(data.message || "Xác thực thất bại. Vui lòng thử lại sau.");
         }
-      } catch (error) {
+      } catch {
         setStatus("error");
         setMessage("Đã có lỗi xảy ra trong quá trình xác thực.");
       }
