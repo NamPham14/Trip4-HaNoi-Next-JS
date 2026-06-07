@@ -96,7 +96,7 @@ export const PlaceAnalytics: React.FC<PlaceAnalyticsProps> = ({
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value: number) => [`${value}%`, 'Mức độ hài lòng']}
+                formatter={(value: any) => [`${value}%`, 'Mức độ hài lòng']}
                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
               />
               <Legend 
