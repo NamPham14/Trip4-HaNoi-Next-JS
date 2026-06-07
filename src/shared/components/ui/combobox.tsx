@@ -70,7 +70,11 @@ export function Combobox({
             className="flex h-10 w-full border-none bg-transparent py-3 text-sm outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
-        <div className="max-h-[300px] overflow-y-auto p-1 custom-scrollbar">
+        <div 
+          className="max-h-[300px] overflow-y-auto p-1 custom-scrollbar overscroll-contain"
+          onWheel={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           {filteredOptions.length === 0 ? (
             <div className="py-6 text-center text-sm text-gray-500">
               {emptyText}
