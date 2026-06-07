@@ -1,6 +1,7 @@
 import React from 'react';
 import { LucideIcon, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/shared/lib/utils';
 
 interface StatsCardProps {
   label: string;
@@ -34,21 +35,34 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   }
 
   const CardContent = (
-    <div className={`bg-white p-6 rounded-xl border shadow-sm flex items-center gap-4 transition-all ${href ? 'hover:shadow-md hover:border-primary/30 cursor-pointer group' : ''}`}>
-      <div className={`p-4 rounded-lg transition-colors ${color} ${href ? 'group-hover:opacity-80' : ''}`}>
-        <Icon size={24} />
+    <div className={cn(
+        "bg-white p-5 rounded-2xl border border-gray-100/50 shadow-[var(--shadow-soft)] flex items-center gap-4 transition-all duration-300",
+        href ? "hover:shadow-[var(--shadow-glass)] hover:-translate-y-1 cursor-pointer group" : ""
+    )}>
+      <div className={cn(
+          "p-3.5 rounded-xl transition-all duration-500 shrink-0",
+          color,
+          href ? "group-hover:scale-110 group-hover:rotate-3" : ""
+      )}>
+        <Icon size={22} strokeWidth={2.5} />
       </div>
-      <div>
-        <p className="text-sm text-gray-500 font-medium">{label}</p>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold">
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] uppercase tracking-[0.1em] text-gray-400 font-black mb-1 truncate">{label}</p>
+        <div className="flex items-baseline gap-1.5 flex-wrap">
+          <h3 className={cn(
+            "font-black tracking-tight break-all leading-tight text-gray-900",
+            typeof value === 'string' && value.length > 12 ? "text-lg" : "text-2xl"
+          )}>
             {typeof value === 'number' ? value.toLocaleString() : value}
           </h3>
           {growth !== undefined && (
-            <span className={`flex items-center text-xs font-bold ${growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {growth >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+            <div className={cn(
+                "flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-black",
+                growth >= 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+            )}>
+              {growth >= 0 ? <ArrowUpRight size={12} strokeWidth={3} /> : <ArrowDownRight size={12} strokeWidth={3} />}
               {Math.abs(growth)}%
-            </span>
+            </div>
           )}
         </div>
       </div>
