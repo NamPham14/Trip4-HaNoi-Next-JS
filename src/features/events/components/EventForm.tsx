@@ -15,6 +15,7 @@ import { Event } from '@/features/events/types/event'
 import { Place } from '@/features/places/types/place'
 import { eventService } from '@/features/events/services/event-api'
 import { toast } from 'sonner'
+import { Combobox } from '@/shared/components/ui/combobox'
 
 // Define Validation Schema
 const eventSchema = z.object({
@@ -121,22 +122,17 @@ export const EventForm: React.FC<EventFormProps> = ({
           name="placeId"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value} disabled={formLoading}>
-              <SelectTrigger className="h-11 border-2 border-gray-200 bg-gray-100/50 hover:bg-gray-100 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-gray-800">
-                <SelectValue placeholder="-- Vui lòng chọn địa điểm tổ chức --" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-2 border-gray-200 shadow-xl rounded-xl p-1">
-                {places.map(place => (
-                    <SelectItem 
-                        key={place.id} 
-                        value={place.id.toString()} 
-                        className="font-medium text-gray-700 cursor-pointer focus:bg-primary/10 focus:text-primary py-2.5 rounded-lg"
-                    >
-                        {place.name}
-                    </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={places.map(place => ({
+                label: place.name,
+                value: place.id.toString()
+              }))}
+              value={field.value}
+              onValueChange={field.onChange}
+              placeholder="-- Vui lòng chọn địa điểm tổ chức --"
+              searchPlaceholder="Tìm tên địa điểm..."
+              disabled={formLoading}
+            />
           )}
         />
         {errors.placeId && <p className="text-[10px] text-red-500">{errors.placeId.message}</p>}
