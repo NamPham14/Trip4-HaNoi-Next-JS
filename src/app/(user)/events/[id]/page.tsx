@@ -180,9 +180,9 @@ export default function EventDetailPage() {
              <Scroll className="h-96 w-96 text-hanoi-red rotate-12" />
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 xl:gap-20">
             {/* Left Column: The Narrative */}
-            <div className="flex-1 min-w-0 space-y-20">
+            <div className="min-w-0 space-y-20">
               <div className="space-y-10">
                 <div className="flex items-center gap-4 text-hanoi-red">
                    <div className="h-px w-12 bg-hanoi-red" />
@@ -230,7 +230,7 @@ export default function EventDetailPage() {
             </div>
 
             {/* Right Column: The Action Scroll */}
-            <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-10">
+            <div className="space-y-10">
               {/* Interaction Card */}
               <div className="bg-white p-8 md:p-12 rounded-[48px] border border-hanoi-red/5 shadow-[0_40px_80px_-20px_rgba(139,29,29,0.08)] lg:sticky lg:top-32">
                 <div className="flex items-center justify-between mb-12">
