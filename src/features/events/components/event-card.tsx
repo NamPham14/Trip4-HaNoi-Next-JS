@@ -77,7 +77,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, className }) => {
         </div>
 
         <p className="text-zinc-500 text-sm md:text-base font-medium line-clamp-2 mb-8 leading-relaxed">
-          {event.description}
+          {event.description?.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
         </p>
 
         <div className="mt-auto pt-5 border-t border-zinc-50 flex items-center justify-between group/action">
