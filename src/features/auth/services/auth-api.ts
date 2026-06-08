@@ -1,6 +1,13 @@
 import axiosInstance from "@/shared/api/axios-instance";
 import { ApiResponse } from "@/shared/types/api";
-import { AuthResponse, LoginRequest, RegisterRequest, User } from "../types/auth";
+import { 
+  AuthResponse, 
+  ForgotPasswordRequest, 
+  LoginRequest, 
+  RegisterRequest, 
+  ResetPasswordRequest, 
+  User 
+} from "../types/auth";
 
 /**
  * Authentication Service
@@ -63,5 +70,19 @@ export const authService = {
   refresh: async (refreshToken: string): Promise<AuthResponse> => {
     const response = await axiosInstance.post<ApiResponse<AuthResponse>>('/auth/refresh-token', { refreshToken });
     return response.data.data;
+  },
+
+  /**
+   * Forgot password - Send OTP to email
+   */
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<void> => {
+    await axiosInstance.post<ApiResponse<void>>('/auth/forgot-password', data);
+  },
+
+  /**
+   * Reset password using OTP/Token
+   */
+  resetPassword: async (data: ResetPasswordRequest): Promise<void> => {
+    await axiosInstance.post<ApiResponse<void>>('/auth/reset-password', data);
   }
 };

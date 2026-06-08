@@ -86,6 +86,42 @@ export const useRegister = () => {
 };
 
 /**
+ * Hook for Forgot Password
+ */
+export const useForgotPassword = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: authService.forgotPassword,
+    onSuccess: () => {
+      toast.success("Mã OTP đã được gửi đến email của bạn!");
+      router.push('/reset-password');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Gửi yêu cầu thất bại. Vui lòng thử lại.");
+    }
+  });
+};
+
+/**
+ * Hook for Reset Password
+ */
+export const useResetPassword = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: authService.resetPassword,
+    onSuccess: () => {
+      toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+      router.push('/login');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Đặt lại mật khẩu thất bại. Vui lòng kiểm tra lại OTP.");
+    }
+  });
+};
+
+/**
  * Hook for Logout
  */
 export const useLogout = () => {
