@@ -180,9 +180,9 @@ export default function EventDetailPage() {
              <Scroll className="h-96 w-96 text-hanoi-red rotate-12" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_400px] gap-12 xl:gap-24 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_400px] gap-8 xl:gap-20 items-start">
             {/* Left Column: The Narrative */}
-            <div className="space-y-20">
+            <div className="space-y-20 lg:pr-16 overflow-hidden">
               <div className="space-y-10">
                 <div className="flex items-center gap-4 text-hanoi-red">
                    <div className="h-px w-12 bg-hanoi-red" />
@@ -191,7 +191,7 @@ export default function EventDetailPage() {
                 
                 <div className="prose prose-zinc max-w-none">
                   <div 
-                    className="text-zinc-700 text-xl md:text-2xl leading-[1.8] font-serif italic border-l-4 border-hanoi-red/10 pl-8 md:pl-12 py-4 break-normal text-pretty max-w-3xl"
+                    className="text-zinc-700 text-xl md:text-2xl leading-[1.8] font-serif italic border-l-4 border-hanoi-red/10 pl-8 md:pl-12 py-4 break-normal text-pretty w-full"
                     dangerouslySetInnerHTML={{ __html: event.description }}
                   />
                 </div>
