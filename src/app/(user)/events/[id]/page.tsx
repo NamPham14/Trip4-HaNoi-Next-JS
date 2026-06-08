@@ -191,7 +191,7 @@ export default function EventDetailPage() {
                 
                 <div className="prose prose-zinc max-w-none">
                   <div 
-                    className="text-zinc-700 text-xl md:text-2xl leading-[1.8] font-serif italic border-l-4 border-hanoi-red/10 pl-8 md:pl-12 py-4 break-words"
+                    className="text-zinc-700 text-xl md:text-2xl leading-[1.8] font-serif italic border-l-4 border-hanoi-red/10 pl-8 md:pl-12 py-4 break-normal text-pretty"
                     dangerouslySetInnerHTML={{ __html: event.description }}
                   />
                 </div>
