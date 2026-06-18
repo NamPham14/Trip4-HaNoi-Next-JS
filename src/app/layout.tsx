@@ -6,6 +6,7 @@ import { LocationProvider } from '@/shared/providers/location-provider'
 import { FcmTokenHandler } from '@/shared/providers/fcm-provider'
 import { ChatWidget } from '@/features/chat/components/chat-widget'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import React from 'react'
 import { Be_Vietnam_Pro } from 'next/font/google'
 import { Toaster } from '@/shared/components/ui/sonner'
@@ -75,6 +76,7 @@ export default function RootLayout({children} :{children :React.ReactNode}) {
           </QueryProvider>
         </GoogleOAuthProvider>
       </body>
+      <GoogleAnalytics gaId="G-DH8SCZQMCK" />
     </html>
   )
 }

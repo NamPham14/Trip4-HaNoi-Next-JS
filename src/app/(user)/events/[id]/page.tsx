@@ -182,16 +182,15 @@ export default function EventDetailPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_400px] gap-8 xl:gap-20 items-start">
             {/* Left Column: The Narrative */}
-            <div className="space-y-20 lg:pr-16 overflow-hidden">
+            <div className="space-y-20 lg:pr-16">
               <div className="space-y-10">
                 <div className="flex items-center gap-4 text-hanoi-red">
                    <div className="h-px w-12 bg-hanoi-red" />
                    <span className="font-black uppercase tracking-[0.4em] text-[10px]">Tâm Tình Sự Kiện</span>
                 </div>
                 
-                <div className="prose prose-zinc max-w-none">
+                <div className="prose prose-lg md:prose-xl prose-zinc max-w-none w-full text-zinc-700 leading-[1.8] break-words text-pretty">
                   <div 
-                    className="text-zinc-700 text-xl md:text-2xl leading-[1.8] font-serif italic border-l-4 border-hanoi-red/10 pl-8 md:pl-12 py-4 break-normal text-pretty w-full"
                     dangerouslySetInnerHTML={{ __html: event.description }}
                   />
                 </div>
