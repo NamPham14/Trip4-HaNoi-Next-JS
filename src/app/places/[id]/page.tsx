@@ -129,7 +129,7 @@ export default function PlaceDetailPage() {
 
           <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 md:gap-12">
             {/* Left Content */}
-            <div className="lg:col-span-2 space-y-10 md:space-y-12">
+            <div className="lg:col-span-2 space-y-10 md:space-y-12 min-w-0">
               <PlaceInfo place={place} />
               
               <PlaceReviews 

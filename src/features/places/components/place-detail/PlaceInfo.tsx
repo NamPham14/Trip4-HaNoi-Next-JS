@@ -19,7 +19,7 @@ export const PlaceInfo = ({ place }: PlaceInfoProps) => {
           Giới thiệu
         </h2>
         <div 
-          className="text-zinc-600 leading-relaxed text-lg"
+          className="text-zinc-600 leading-relaxed text-lg break-words w-full overflow-hidden [&_img]:max-w-full [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto"
           dangerouslySetInnerHTML={{ 
             __html: place.description || "Chưa có mô tả chi tiết cho địa điểm này." 
           }} 
