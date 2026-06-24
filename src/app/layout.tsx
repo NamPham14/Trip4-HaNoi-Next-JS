@@ -57,6 +57,12 @@ export const metadata: Metadata = {
       { url: '/icon.jpg', sizes: '180x180', type: 'image/jpeg' },
     ],
   },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Trip4Hanoi',
+  },
 }
 
 export default function RootLayout({children} :{children :React.ReactNode}) {
